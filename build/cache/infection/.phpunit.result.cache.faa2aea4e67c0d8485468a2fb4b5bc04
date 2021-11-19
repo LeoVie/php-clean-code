@@ -1,0 +1,1 @@
+{"version":1,"defects":{"App\\Tests\\Unit\\Rule\\FileRuleResultsTest::testToString":4},"times":{"App\\Tests\\Unit\\Rule\\FileRuleResultsTest::testGetPath":0.002,"App\\Tests\\Unit\\Rule\\FileRuleResultsTest::testGetViolations":0.005,"App\\Tests\\Unit\\Rule\\FileRuleResultsTest::testToString":0.009}}

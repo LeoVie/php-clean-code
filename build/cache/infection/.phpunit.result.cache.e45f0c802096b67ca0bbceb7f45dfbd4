@@ -1,0 +1,1 @@
+{"version":1,"defects":{"App\\Tests\\Unit\\Rule\\ConcreteRule\\CCK01SpareCommentsTest::testViolation with data set #0":3},"times":{"App\\Tests\\Unit\\Rule\\ConcreteRule\\CCK01SpareCommentsTest::testCompliance with data set #0":0.004,"App\\Tests\\Unit\\Rule\\ConcreteRule\\CCK01SpareCommentsTest::testViolation with data set #0":0.003}}

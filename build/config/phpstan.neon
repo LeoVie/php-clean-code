@@ -1,0 +1,18 @@
+includes:
+        - /composer/vendor/spaze/phpstan-disallowed-calls/extension.neon
+parameters:
+    level: max
+    paths:
+        - %currentWorkingDirectory%/src
+        - %currentWorkingDirectory%/tests/Unit
+    excludePaths:
+        - %currentWorkingDirectory%/template/generated/*
+    ignoreErrors:
+        - '#Method App\\Tests.+ has parameter .+ with no value type specified in iterable type .+#'
+        - '#Method App\\Tests.+ return type has no value type specified in iterable type .+#'
+    disallowedMethodCalls:
+        - method: '*\*::__construct'
+          message: "Don't use naive object instantiation."
+          allowIn:
+              - %currentWorkingDirectory%/src/ServiceFactory/*
+              - %currentWorkingDirectory%/tests/*

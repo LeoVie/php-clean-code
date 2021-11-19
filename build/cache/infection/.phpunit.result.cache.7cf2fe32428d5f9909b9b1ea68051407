@@ -1,0 +1,1 @@
+{"version":1,"defects":{"App\\Tests\\Unit\\Rule\\CCF01VerticalSizeLimitTest::testCompliance with data set #0":3},"times":{"App\\Tests\\Unit\\Rule\\CCF01VerticalSizeLimitTest::testGetName":0.003,"App\\Tests\\Unit\\Rule\\CCF01VerticalSizeLimitTest::testGetLevel":0,"App\\Tests\\Unit\\Rule\\CCF01VerticalSizeLimitTest::testCompliance with data set #0":0.001}}

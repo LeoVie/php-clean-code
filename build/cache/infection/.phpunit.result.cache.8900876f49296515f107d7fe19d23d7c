@@ -1,0 +1,1 @@
+{"version":1,"defects":{"App\\Tests\\Unit\\Find\\PhpFileFinderTest::testFindPhpFilesInPath":4},"times":{"App\\Tests\\Unit\\Find\\PhpFileFinderTest::testFindPhpFilesInPath":0.002}}
