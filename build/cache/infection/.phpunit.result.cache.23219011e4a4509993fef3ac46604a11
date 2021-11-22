@@ -1,1 +1,0 @@
-{"version":1,"defects":{"App\\Tests\\Unit\\Rule\\RuleCollectionTest::testGetTokenSequenceAwareRules":4},"times":{"App\\Tests\\Unit\\Rule\\RuleCollectionTest::testGetClassNodeAwareRules":0.004,"App\\Tests\\Unit\\Rule\\RuleCollectionTest::testGetCodeAwareRules":0,"App\\Tests\\Unit\\Rule\\RuleCollectionTest::testGetTokenSequenceAwareRules":0.006}}

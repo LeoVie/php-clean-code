@@ -21,7 +21,7 @@ class CCK01SpareComments implements RuleTokenSequenceAware
 
     public function check(TokenSequence $tokenSequence): array
     {
-        $commentTokens = (clone $tokenSequence)->onlyComments()->filter();
+        $commentTokens = $tokenSequence->onlyComments()->filter();
 
         $amountOfComments = $this->calculateAmount($commentTokens->length(), $tokenSequence->length());
 

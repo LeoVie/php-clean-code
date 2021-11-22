@@ -1,1 +1,0 @@
-{"version":1,"defects":{"App\\Tests\\Unit\\Rule\\CCF04HorizontalSizeLimitTest::testViolation with data set #0":3},"times":{"App\\Tests\\Unit\\Rule\\CCF04HorizontalSizeLimitTest::testCompliance with data set #0":0.004,"App\\Tests\\Unit\\Rule\\CCF04HorizontalSizeLimitTest::testViolation with data set #0":0.001}}

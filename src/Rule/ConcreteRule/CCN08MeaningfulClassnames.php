@@ -28,7 +28,7 @@ class CCN08MeaningfulClassnames implements RuleClassNodeAware
             return [Compliance::create($this)];
         }
 
-        $forbiddenNamePart = $this->getForbiddenNamePart($name);
+        $forbiddenNamePart = $this->getForbiddenNamePart($name->name);
         if ($forbiddenNamePart !== null) {
             $message = \Safe\sprintf(
                 self::VIOLATION_MESSAGE_PATTERN,

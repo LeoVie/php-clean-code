@@ -17,6 +17,11 @@
       "ignore": [
         "App\\Rule\\ConcreteRule\\CCK01SpareComments::check"
       ]
+    },
+    "UnwrapRtrim": {
+      "ignore": [
+        "App\\Rule\\ConcreteRule\\CCF07ConsistentIndentationCharacters::check"
+      ]
     }
   },
   "tmpDir": "../cache"

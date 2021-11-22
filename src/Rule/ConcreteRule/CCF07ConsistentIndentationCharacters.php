@@ -11,7 +11,7 @@ class CCF07ConsistentIndentationCharacters implements RuleFileCodeAware
     private const NAME = 'CC-F-07 Consistent Indentation Characters';
     private const ALLOWED_INDENTATION_CHARACTER_SEQUENCE = '    ';
     private const VIOLATION_MESSAGE_PATTERN = 'Line %d uses "%s" (ascii %s) for indentation, but should use "%s" (ascii %s).';
-    private const ACTUAL_INDENTATION_PATTERN = '@^(\s+)@';
+    private const ACTUAL_INDENTATION_PATTERN = '@^\s+@';
 
     public function getName(): string
     {
@@ -60,14 +60,17 @@ class CCF07ConsistentIndentationCharacters implements RuleFileCodeAware
 
     private function stringToAsciiList(string $string): string
     {
-        return join(', ', array_map(fn(string $char): string => ord($char), str_split($string)));
+        return join(', ', array_map(fn(string $char): int => ord($char), str_split($string)));
     }
 
     private function ltrimIndentationCharacters(string $subject): string
     {
         $pattern = sprintf('@^(%s)*@', self::ALLOWED_INDENTATION_CHARACTER_SEQUENCE);
 
-        return preg_replace($pattern, '', $subject);
+        /** @var string $ltrimmed */
+        $ltrimmed = \Safe\preg_replace($pattern, '', $subject);
+
+        return $ltrimmed;
     }
 
     private function startsWithWhitespaceCharacter(string $subject): bool
@@ -76,6 +79,6 @@ class CCF07ConsistentIndentationCharacters implements RuleFileCodeAware
             return false;
         }
 
-        return preg_match('@\S@', $subject[0]) !== 1;
+        return \Safe\preg_match('@\S@', $subject[0]) !== 1;
     }
 }
