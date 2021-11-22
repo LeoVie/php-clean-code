@@ -2,7 +2,7 @@
 
 namespace App\Rule\RuleResult;
 
-interface RuleResult
+interface RuleResult extends \JsonSerializable
 {
     public function toString(): string;
 }

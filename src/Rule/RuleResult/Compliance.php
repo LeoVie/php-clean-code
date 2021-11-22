@@ -15,6 +15,14 @@ class Compliance implements RuleResult
         return new self($rule);
     }
 
+    public function jsonSerialize(): array
+    {
+        return [
+            'type' => 'compliance',
+            'rule' => $this->rule->getName(),
+        ];
+    }
+
     public function toString(): string
     {
         return \Safe\sprintf('- %s: ✅', $this->rule->getName());

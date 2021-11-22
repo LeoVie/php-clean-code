@@ -27,8 +27,12 @@ services:
   _instanceof:
     App\Rule\RuleConcept\Rule:
       tags: [ 'app.rule' ]
+    App\Command\CheckDirectory\Output\Output:
+      tags: [ 'app.check_directory.output' ]
   App\Rule\RuleCollection:
     arguments: [ !tagged_iterator { tag: 'app.rule' } ]
+  App\Command\CheckDirectory\Output\OutputHolder:
+    arguments: [ !tagged_iterator { tag: 'app.check_directory.output' } ]
 
   PhpParser\ParserFactory: ~
   PhpParser\NodeTraverser: ~

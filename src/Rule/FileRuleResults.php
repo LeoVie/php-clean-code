@@ -5,7 +5,7 @@ namespace App\Rule;
 use App\Rule\RuleResult\RuleResult;
 use App\Rule\RuleResult\Violation;
 
-class FileRuleResults
+class FileRuleResults implements \JsonSerializable
 {
     /** @param RuleResult[] $ruleResults */
     private function __construct(private string $path, private array $ruleResults)
@@ -32,6 +32,17 @@ class FileRuleResults
                 fn(RuleResult $rr): bool => $rr instanceof Violation
             )
         );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'path' => $this->path,
+            'violations' => array_map(
+                fn(RuleResult $rr): array => $rr->jsonSerialize(),
+                $this->getViolations()
+            ),
+        ];
     }
 
     public function toString(): string

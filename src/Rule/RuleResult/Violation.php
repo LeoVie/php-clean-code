@@ -18,6 +18,15 @@ class Violation implements RuleResult
         return new self($rule, $message);
     }
 
+    public function jsonSerialize(): array
+    {
+        return [
+            'type' => 'violation',
+            'rule' => $this->rule->getName(),
+            'message' => $this->message,
+        ];
+    }
+
     public function toString(): string
     {
         return \Safe\sprintf("- %s: ❎ (%s)", $this->rule->getName(), $this->message);
