@@ -15,3 +15,6 @@ symfony.lock
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+build/*
+!build/config
