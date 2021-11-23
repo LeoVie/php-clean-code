@@ -3,8 +3,7 @@
 namespace App\Tests\Unit\Rule;
 
 use App\Rule\FileRuleResults;
-use App\Rule\RuleResult\Compliance;
-use App\Rule\RuleResult\Violation;
+use App\Rule\RuleResult\RuleResultCollection;
 use PHPUnit\Framework\TestCase;
 
 class FileRuleResultsTest extends TestCase
@@ -13,47 +12,25 @@ class FileRuleResultsTest extends TestCase
     {
         $path = '/var/file.php';
 
-        self::assertSame($path, FileRuleResults::create($path, [])->getPath());
+        self::assertSame($path, FileRuleResults::create($path, RuleResultCollection::create([]))->getPath());
     }
 
-    public function testGetViolations(): void
+    public function testGetRuleResultCollection(): void
     {
-        $ruleResults = [
-            $this->createMock(Compliance::class),
-            $this->createMock(Compliance::class),
-            $this->createMock(Violation::class),
-            $this->createMock(Compliance::class),
-            $this->createMock(Violation::class),
-        ];
+        $ruleResultCollection = RuleResultCollection::create([]);
 
-        $violations = [
-            $ruleResults[2],
-            $ruleResults[4],
-        ];
-
-        self::assertSame($violations, FileRuleResults::create('', $ruleResults)->getViolations());
+        self::assertSame($ruleResultCollection, FileRuleResults::create('', $ruleResultCollection)->getRuleResultCollection());
     }
 
     public function testToString(): void
     {
         $expected
             = "/var/file.php:"
-            . "\n\tRule 1"
-            . "\n\tRule 2";
+            . "\n\tRuleResultCollectionAsString";
 
-        $ruleResults = [
-            $this->mockViolation('Rule 1'),
-            $this->mockViolation('Rule 2'),
-        ];
+        $ruleResultCollection = $this->createMock(RuleResultCollection::class);
+        $ruleResultCollection->method('toString')->willReturn('RuleResultCollectionAsString');
 
-        self::assertSame($expected, FileRuleResults::create('/var/file.php', $ruleResults)->toString());
-    }
-
-    private function mockViolation(string $asString): Violation
-    {
-        $violation = $this->createMock(Violation::class);
-        $violation->method('toString')->willReturn($asString);
-
-        return $violation;
+        self::assertSame($expected, FileRuleResults::create('/var/file.php', $ruleResultCollection)->toString());
     }
 }

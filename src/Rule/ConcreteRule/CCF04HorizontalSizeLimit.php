@@ -3,7 +3,6 @@
 namespace App\Rule\ConcreteRule;
 
 use App\Model\Line;
-use App\Rule\RuleConcept\Rule;
 use App\Rule\RuleConcept\RuleFileCodeAware;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
@@ -13,6 +12,7 @@ class CCF04HorizontalSizeLimit implements RuleFileCodeAware
     private const NAME = 'CC-F-04 Horizontal Size Limit';
     private const MAX_HORIZONTAL_SIZE = 120;
     private const VIOLATION_MESSAGE_PATTERN = 'Line %d has %d characters more than allowed.';
+    private const COMPLIANCE_MESSAGE_PATTERN = 'No too long lines exist in code.';
 
     public function getName(): string
     {
@@ -24,12 +24,16 @@ class CCF04HorizontalSizeLimit implements RuleFileCodeAware
         $tooLongLines = $this->extractTooLongLines($code);
 
         if (empty($tooLongLines)) {
-            return [Compliance::create($this)];
+            $message = self::COMPLIANCE_MESSAGE_PATTERN;
+
+            return [Compliance::create($this, $message)];
         }
 
         $violations = [];
         foreach ($tooLongLines as $tooLongLine) {
-            $violations[] = Violation::create($this, $this->buildViolationMessage($tooLongLine));
+            $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $tooLongLine);
+
+            $violations[] = Violation::create($this, $message);
         }
 
         return $violations;
@@ -54,12 +58,12 @@ class CCF04HorizontalSizeLimit implements RuleFileCodeAware
         return strlen($line) > self::MAX_HORIZONTAL_SIZE;
     }
 
-    private function buildViolationMessage(Line $line): string
+    private function buildMessage(string $pattern, Line $line): string
     {
         return \Safe\sprintf(
-            self::VIOLATION_MESSAGE_PATTERN,
+            $pattern,
             $line->getLineNumber(),
-            strlen($line->getContent()) - self::MAX_HORIZONTAL_SIZE
+            abs(strlen($line->getContent()) - self::MAX_HORIZONTAL_SIZE)
         );
     }
 }

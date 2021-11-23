@@ -11,12 +11,12 @@ use PHPUnit\Framework\TestCase;
 class CCK01SpareCommentsTest extends TestCase
 {
     /** @dataProvider complianceProvider */
-    public function testCompliance(TokenSequence $tokenSequence): void
+    public function testCompliance(TokenSequence $tokenSequence, string $message): void
     {
         $rule = new CCK01SpareComments();
 
         self::assertEquals(
-            [Compliance::create($rule)],
+            [Compliance::create($rule, $message)],
             $rule->check($tokenSequence)
         );
     }
@@ -25,12 +25,13 @@ class CCK01SpareCommentsTest extends TestCase
     {
         return [
             [
-                TokenSequence::create([
+                'tokenSequence' => TokenSequence::create([
                     new \PhpToken(T_OPEN_TAG, ''),
                     new \PhpToken(T_VARIABLE, ''),
                     new \PhpToken(T_WHITESPACE, ''),
                     new \PhpToken(T_LNUMBER, ''),
                 ]),
+                'message' => 'File has an allowed amount of comment tokens (0.000000, that\'s 5.000000 percent points lower than allowed maximum).',
             ],
         ];
     }
@@ -56,7 +57,7 @@ class CCK01SpareCommentsTest extends TestCase
                     new \PhpToken(T_COMMENT, ''),
                     new \PhpToken(T_LNUMBER, ''),
                 ]),
-                'message' => 'File has a too high amount of comment tokens (20.000000 percent points higher than allowed).',
+                'message' => 'File has a too high amount of comment tokens (25.000000, that\' s 20.000000 percent points higher than allowed).',
             ],
         ];
     }

@@ -10,7 +10,7 @@ class OutputHolder
     public function __construct(private iterable $outputs)
     {}
 
-    public function getOutputByFormatAndSymfonyOutput(string $format, OutputInterface $symfonyOutput): ?Output
+    public function getOutputByFormatAndSymfonyOutput(string $format, OutputInterface $symfonyOutput): Output
     {
         foreach ($this->outputs as $output) {
             if ($output->getFormat() === $format) {

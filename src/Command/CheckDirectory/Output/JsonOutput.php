@@ -30,6 +30,7 @@ class JsonOutput implements Output
         return $this;
     }
 
+    /** @inheritDoc */
     public function fileRuleResults(array $fileRuleResultsArray): self
     {
         $fileRuleResultsData = array_values(
@@ -39,9 +40,26 @@ class JsonOutput implements Output
             )
         );
 
+        $violationsExist = false;
+        foreach ($fileRuleResultsArray as $fileRuleResult) {
+            if (!empty($fileRuleResult->getRuleResultCollection()->getViolations())) {
+                $violationsExist = true;
+                break;
+            }
+        }
+
+        $compliancesExist = false;
+        foreach ($fileRuleResultsArray as $fileRuleResult) {
+            if (!empty($fileRuleResult->getRuleResultCollection()->getCompliances())) {
+                $compliancesExist = true;
+                break;
+            }
+        }
+
         $this->symfonyOutput->writeln(\Safe\json_encode([
-            'violations_exist' => true,
-            'violations' => $fileRuleResultsData
+            'violations_exist' => $violationsExist,
+            'compliances_exist' => $compliancesExist,
+            'rule_results' => $fileRuleResultsData
         ]));
 
         return $this;

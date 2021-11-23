@@ -13,6 +13,8 @@ class CCN04PronounceableNames implements RuleNameNodeAware
 {
     private const NAME = 'CC-N-04 Pronounceable Names';
     private const VIOLATION_MESSAGE_PATTERN = 'Name "%s" in line %d seems to be unpronounceable.';
+    private const COMPLIANCE_MESSAGE_PATTERN = 'Name "%s" in line %d seems to be pronounceable.';
+    private const NODE_IS_EXPRESSION_MESSAGE_PATTERN = 'Name is an expression and therefore pronounceable by definition.';
 
     public function getName(): string
     {
@@ -23,20 +25,17 @@ class CCN04PronounceableNames implements RuleNameNodeAware
     {
         $name = $node->name;
         if ($name instanceof Expr) {
-            return [Compliance::create($this)];
+            return [Compliance::create($this, self::NODE_IS_EXPRESSION_MESSAGE_PATTERN)];
         }
 
         if ($this->stringSeemsUnpronounceable($name)) {
-            $message = \Safe\sprintf(
-                self::VIOLATION_MESSAGE_PATTERN,
-                $name,
-                $node->getStartLine(),
-            );
+            $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $name, $node);
 
             return [Violation::create($this, $message)];
         }
 
-        return [Compliance::create($this)];
+        $message = $this->buildMessage(self::COMPLIANCE_MESSAGE_PATTERN, $name, $node);
+        return [Compliance::create($this, $message)];
     }
 
     private function stringSeemsUnpronounceable(string $string): bool
@@ -60,5 +59,14 @@ class CCN04PronounceableNames implements RuleNameNodeAware
         $vowels = ['A', 'E', 'I', 'O', 'U', 'Y'];
 
         return in_array(ucfirst($char), $vowels);
+    }
+
+    private function buildMessage(string $pattern, string $name, Identifier|Variable $node): string
+    {
+        return \Safe\sprintf(
+            $pattern,
+            $name,
+            $node->getStartLine(),
+        );
     }
 }

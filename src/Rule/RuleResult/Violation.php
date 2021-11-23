@@ -18,6 +18,11 @@ class Violation implements RuleResult
         return new self($rule, $message);
     }
 
+    public function getRule(): Rule
+    {
+        return $this->rule;
+    }
+
     public function jsonSerialize(): array
     {
         return [

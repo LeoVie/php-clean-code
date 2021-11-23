@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 class CCF04HorizontalSizeLimitTest extends TestCase
 {
     /** @dataProvider complianceProvider */
-    public function testCompliance(string $code): void
+    public function testCompliance(string $code, string $message): void
     {
         $rule = new CCF04HorizontalSizeLimit();
 
         self::assertEquals(
-            [Compliance::create($rule)],
+            [Compliance::create($rule, $message)],
             $rule->check($code)
         );
     }
@@ -24,12 +24,13 @@ class CCF04HorizontalSizeLimitTest extends TestCase
     {
         return [
             [
-                join("\n",
+                'code' => join("\n",
                     [
                         'this is not too long',
                         'and this neither',
                     ]
                 ),
+                'message' => 'No too long lines exist in code.',
             ],
         ];
     }

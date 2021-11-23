@@ -10,6 +10,7 @@ parameters:
     ignoreErrors:
         - '#Method App\\Tests.+ has parameter .+ with no value type specified in iterable type .+#'
         - '#Method App\\Tests.+ return type has no value type specified in iterable type .+#'
+        - '#Method .+::jsonSerialize\(\) return type has no value type specified in iterable type array\.#'
     disallowedMethodCalls:
         - method: '*\*::__construct'
           message: "Don't use naive object instantiation."

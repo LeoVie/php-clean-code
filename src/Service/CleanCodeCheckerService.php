@@ -7,6 +7,7 @@ use App\NodeVisitor\ExtractClassesNodeVisitor;
 use App\NodeVisitor\ExtractNamesNodeVisitor;
 use App\Rule\FileRuleResults;
 use App\Rule\RuleCollection;
+use App\Rule\RuleResult\RuleResultCollection;
 use App\Wrapper\LineAndColumnLexerWrapper;
 use LeoVie\PhpFilesystem\Service\Filesystem;
 use LeoVie\PhpTokenNormalize\Model\TokenSequence;
@@ -42,9 +43,15 @@ class CleanCodeCheckerService
 
     public function checkFile(string $path): FileRuleResults
     {
+        $fileCode = $this->filesystem->readFile($path);
+
+        return FileRuleResults::create($path, $this->checkCode($fileCode));
+    }
+
+    public function checkCode(string $fileCode): RuleResultCollection
+    {
         $ruleResults = [];
 
-        $fileCode = $this->filesystem->readFile($path);
         foreach ($this->ruleCollection->getFileCodeAwareRules() as $rule) {
             $ruleResults = array_merge(
                 $ruleResults,
@@ -81,7 +88,7 @@ class CleanCodeCheckerService
             }
         }
 
-        return FileRuleResults::create($path, $ruleResults);
+        return RuleResultCollection::create($ruleResults);
     }
 
     private function parseAndTraverse(string $fileCode): void

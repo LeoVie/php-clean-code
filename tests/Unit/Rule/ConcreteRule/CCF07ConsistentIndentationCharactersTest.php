@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 class CCF07ConsistentIndentationCharactersTest extends TestCase
 {
     /** @dataProvider complianceProvider */
-    public function testCompliance(string $code): void
+    public function testCompliance(string $code, string $message): void
     {
         $rule = new CCF07ConsistentIndentationCharacters();
 
         self::assertEquals(
-            [Compliance::create($rule)],
+            [Compliance::create($rule, $message)],
             $rule->check($code)
         );
     }
@@ -24,8 +24,8 @@ class CCF07ConsistentIndentationCharactersTest extends TestCase
     {
         return [
             [
-                '    properly indented',
-                "    properly indented with line break"
+                'code' => '    properly indented',
+                'message' => 'Code is properly indented (all lines use "    " (ascii 32, 32, 32, 32) for indentation).'
             ],
         ];
     }

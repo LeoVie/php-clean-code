@@ -13,12 +13,12 @@ use PHPUnit\Framework\TestCase;
 class CCN04PronounceableNamesTest extends TestCase
 {
     /** @dataProvider complianceProvider */
-    public function testCompliance(Identifier|Variable $node): void
+    public function testCompliance(Identifier|Variable $node, string $message): void
     {
         $rule = new CCN04PronounceableNames();
 
         self::assertEquals(
-            [Compliance::create($rule)],
+            [Compliance::create($rule, $message)],
             $rule->check($node)
         );
     }
@@ -27,29 +27,37 @@ class CCN04PronounceableNamesTest extends TestCase
     {
         return [
             [
-                $this->mockIdentifier('pronounceable', 10),
+                'node' => $this->mockIdentifier('pronounceable', 10),
+                'message' => 'Name "pronounceable" in line 10 seems to be pronounceable.',
             ],
             [
-                $this->mockIdentifier('aa', 10),
+                'node' => $this->mockIdentifier('aa', 10),
+                'message' => 'Name "aa" in line 10 seems to be pronounceable.',
             ],
             [
-                $this->mockIdentifier('ee', 10),
+                'node' => $this->mockIdentifier('ee', 10),
+                'message' => 'Name "ee" in line 10 seems to be pronounceable.',
             ],
             [
-                $this->mockIdentifier('ii', 10),
+                'node' => $this->mockIdentifier('ii', 10),
+                'message' => 'Name "ii" in line 10 seems to be pronounceable.',
             ],
             [
-                $this->mockIdentifier('oo', 10),
+                'node' => $this->mockIdentifier('oo', 10),
+                'message' => 'Name "oo" in line 10 seems to be pronounceable.',
             ],
             [
-                $this->mockIdentifier('uu', 10),
+                'node' => $this->mockIdentifier('uu', 10),
+                'message' => 'Name "uu" in line 10 seems to be pronounceable.',
             ],
             [
-                $this->mockIdentifier('yy', 10),
+                'node' => $this->mockIdentifier('yy', 10),
+                'message' => 'Name "yy" in line 10 seems to be pronounceable.',
             ],
             [
-                $this->mockVariable(),
-            ]
+                'node' => $this->mockVariable(),
+                'message' => 'Name is an expression and therefore pronounceable by definition.',
+            ],
         ];
     }
 

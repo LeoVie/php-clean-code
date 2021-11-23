@@ -2,7 +2,13 @@
 
 namespace App\Rule\RuleResult;
 
+use App\Rule\RuleConcept\Rule;
+
 interface RuleResult extends \JsonSerializable
 {
+    public function getRule(): Rule;
+
     public function toString(): string;
+
+    public function jsonSerialize(): array;
 }

@@ -12,7 +12,8 @@ use PhpParser\Node\Stmt\Property;
 class CCF03InstanceVariablesGrouped implements RuleClassNodeAware
 {
     private const NAME = 'CC-F-03 Instance Variables Grouped';
-    private const VIOLATION_MESSAGE_PATTERN = 'Class %s has ungrouped instance variables.';
+    private const VIOLATION_MESSAGE_PATTERN = 'Class "%s" has ungrouped instance variables.';
+    private const COMPLIANCE_MESSAGE_PATTERN = 'Class "%s" has no ungrouped instance variables.';
 
     public function getName(): string
     {
@@ -32,12 +33,21 @@ class CCF03InstanceVariablesGrouped implements RuleClassNodeAware
             }
 
             if ($instanceVariableGroupFinished) {
-                return [Violation::create($this, \Safe\sprintf(self::VIOLATION_MESSAGE_PATTERN, $class->name))];
+                $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $class);
+
+                return [Violation::create($this, $message)];
             }
 
             $currentlyInInstanceVariableGroup = true;
         }
 
-        return [Compliance::create($this)];
+        $message = $this->buildMessage(self::COMPLIANCE_MESSAGE_PATTERN, $class);
+
+        return [Compliance::create($this, $message)];
+    }
+
+    private function buildMessage(string $pattern, Class_ $class): string
+    {
+        return \Safe\sprintf($pattern, $class->name);
     }
 }

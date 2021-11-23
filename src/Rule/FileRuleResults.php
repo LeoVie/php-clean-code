@@ -2,20 +2,17 @@
 
 namespace App\Rule;
 
-use App\Rule\RuleResult\RuleResult;
-use App\Rule\RuleResult\Violation;
+use App\Rule\RuleResult\RuleResultCollection;
 
 class FileRuleResults implements \JsonSerializable
 {
-    /** @param RuleResult[] $ruleResults */
-    private function __construct(private string $path, private array $ruleResults)
+    private function __construct(private string $path, private RuleResultCollection $ruleResultCollection)
     {
     }
 
-    /** @param RuleResult[] $ruleResults */
-    public static function create(string $path, array $ruleResults): self
+    public static function create(string $path, RuleResultCollection $ruleResultCollection): self
     {
-        return new self($path, $ruleResults);
+        return new self($path, $ruleResultCollection);
     }
 
     public function getPath(): string
@@ -23,25 +20,16 @@ class FileRuleResults implements \JsonSerializable
         return $this->path;
     }
 
-    /** @return Violation[] */
-    public function getViolations(): array
+    public function getRuleResultCollection(): RuleResultCollection
     {
-        return array_values(
-            array_filter(
-                $this->ruleResults,
-                fn(RuleResult $rr): bool => $rr instanceof Violation
-            )
-        );
+        return $this->ruleResultCollection;
     }
 
     public function jsonSerialize(): array
     {
         return [
             'path' => $this->path,
-            'violations' => array_map(
-                fn(RuleResult $rr): array => $rr->jsonSerialize(),
-                $this->getViolations()
-            ),
+            'rule_results' => $this->ruleResultCollection->jsonSerialize()
         ];
     }
 
@@ -50,7 +38,7 @@ class FileRuleResults implements \JsonSerializable
         return \Safe\sprintf(
             "%s:\n\t%s",
             $this->path,
-            join("\n\t", array_map(fn(RuleResult $rr): string => $rr->toString(), $this->getViolations()))
+            $this->ruleResultCollection->toString()
         );
     }
 }

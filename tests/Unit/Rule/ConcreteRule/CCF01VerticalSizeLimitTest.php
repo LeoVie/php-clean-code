@@ -16,12 +16,12 @@ class CCF01VerticalSizeLimitTest extends TestCase
     }
 
     /** @dataProvider complianceProvider */
-    public function testCompliance(string $code): void
+    public function testCompliance(string $code, string $message): void
     {
         $rule = new CCF01VerticalSizeLimit();
 
         self::assertEquals(
-            [Compliance::create($rule)],
+            [Compliance::create($rule, $message)],
             $rule->check($code)
         );
     }
@@ -30,7 +30,12 @@ class CCF01VerticalSizeLimitTest extends TestCase
     {
         return [
             [
-                trim(str_repeat("line\n", 500)),
+                'code' => "line",
+                'message' => 'File has 499 lines less than allowed maximum.'
+            ],
+            [
+                'code' => trim(str_repeat("line\n", 500)),
+                'message' => 'File has 0 lines less than allowed maximum.'
             ],
         ];
     }
