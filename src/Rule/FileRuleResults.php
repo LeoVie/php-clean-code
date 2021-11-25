@@ -32,13 +32,4 @@ class FileRuleResults implements \JsonSerializable
             'rule_results' => $this->ruleResultCollection->jsonSerialize()
         ];
     }
-
-    public function toString(): string
-    {
-        return \Safe\sprintf(
-            "%s:\n\t%s",
-            $this->path,
-            $this->ruleResultCollection->toString()
-        );
-    }
 }

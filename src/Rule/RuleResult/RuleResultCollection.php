@@ -4,6 +4,9 @@ namespace App\Rule\RuleResult;
 
 class RuleResultCollection implements \JsonSerializable
 {
+    /** @var RuleResult[] */
+    private array $ruleResults;
+
     /** @var Violation[] */
     private array $violations;
 
@@ -13,6 +16,7 @@ class RuleResultCollection implements \JsonSerializable
     /** @param RuleResult[] $ruleResults */
     private function __construct(array $ruleResults)
     {
+        $this->ruleResults = $this->sortRuleResultsByRuleName($ruleResults);
         $this->violations = $this->extractViolations($ruleResults);
         $this->compliances = $this->extractCompliances($ruleResults);
     }
@@ -53,6 +57,12 @@ class RuleResultCollection implements \JsonSerializable
         );
     }
 
+    /** @return RuleResult[] */
+    public function getRuleResults(): array
+    {
+        return $this->ruleResults;
+    }
+
     /** @return Violation[] */
     public function getViolations(): array
     {
@@ -70,11 +80,11 @@ class RuleResultCollection implements \JsonSerializable
         return [
             'violations' => array_map(
                 fn(RuleResult $rr): array => $rr->jsonSerialize(),
-                $this->sortRuleResultsByRuleName($this->getViolations())
+                $this->sortRuleResultsByRuleName($this->violations)
             ),
             'compliances' => array_map(
                 fn(RuleResult $rr): array => $rr->jsonSerialize(),
-                $this->sortRuleResultsByRuleName($this->getCompliances())
+                $this->sortRuleResultsByRuleName($this->compliances)
             ),
         ];
     }
@@ -98,13 +108,5 @@ class RuleResultCollection implements \JsonSerializable
         });
 
         return $ruleResults;
-    }
-
-    public function toString(): string
-    {
-        return join("\n\t", array_map(
-            fn(RuleResult $rr): string => $rr->toString(),
-            $this->sortRuleResultsByRuleName(array_merge($this->compliances, $this->violations))
-        ));
     }
 }

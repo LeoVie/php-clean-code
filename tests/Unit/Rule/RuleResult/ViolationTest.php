@@ -8,14 +8,39 @@ use PHPUnit\Framework\TestCase;
 
 class ViolationTest extends TestCase
 {
-    public function testToString(): void
+    public function testGetRule(): void
     {
-        $ruleName = 'Rule 1';
-        $message = 'The rule was violated.';
+        $rule = $this->mockRule();
 
+        self::assertSame($rule, Violation::create($rule, '')->getRule());
+    }
+
+    public function testGetMessage(): void
+    {
+        $message = 'Rule failed';
+
+        self::assertSame($message, Violation::create($this->mockRule(), $message)->getMessage());
+    }
+
+    public function testJsonSerialize(): void
+    {
+        $ruleName = 'Rule123';
+        $message = 'Rule failed';
+
+        $expected = [
+            'type' => 'violation',
+            'rule' => $ruleName,
+            'message' => $message,
+        ];
+
+        self::assertSame($expected, Violation::create($this->mockRule($ruleName), $message)->jsonSerialize());
+    }
+
+    private function mockRule(string $name = ''): Rule
+    {
         $rule = $this->createMock(Rule::class);
-        $rule->method('getName')->willReturn($ruleName);
+        $rule->method('getName')->willReturn($name);
 
-        self::assertSame('- Rule 1: ❎ (The rule was violated.)', Violation::create($rule, $message)->toString());
+        return $rule;
     }
 }

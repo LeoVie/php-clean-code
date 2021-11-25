@@ -23,6 +23,11 @@ class Violation implements RuleResult
         return $this->rule;
     }
 
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
+
     public function jsonSerialize(): array
     {
         return [

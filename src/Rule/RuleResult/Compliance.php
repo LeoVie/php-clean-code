@@ -20,6 +20,11 @@ class Compliance implements RuleResult
         return $this->rule;
     }
 
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -27,10 +32,5 @@ class Compliance implements RuleResult
             'rule' => $this->rule->getName(),
             'message' => $this->message
         ];
-    }
-
-    public function toString(): string
-    {
-        return \Safe\sprintf('- %s: ✅ (%s)', $this->rule->getName(), $this->message);
     }
 }

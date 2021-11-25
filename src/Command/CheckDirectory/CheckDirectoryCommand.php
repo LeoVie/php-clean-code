@@ -62,7 +62,7 @@ class CheckDirectoryCommand extends Command
         $outputFormat = $this->extractOutputFormatArgument($input);
         $showOnlyViolations = $this->extractShowOnlyViolationsOption($input);
 
-        $commandOutput = $this->outputHolder->getOutputByFormatAndSymfonyOutput($outputFormat, $output);
+        $commandOutput = $this->outputHolder->getOutputByFormatAndSymfonyIO($outputFormat, $input, $output);
 
         $fileRuleResultsArray = $this->cleanCodeCheckerService->checkDirectory($directory);
 

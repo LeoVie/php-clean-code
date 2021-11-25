@@ -2,13 +2,61 @@
 
 namespace App\Tests\Unit\Rule\RuleResult;
 
+use App\Rule\RuleConcept\Rule;
 use App\Rule\RuleResult\Compliance;
+use App\Rule\RuleResult\RuleResult;
 use App\Rule\RuleResult\RuleResultCollection;
 use App\Rule\RuleResult\Violation;
 use PHPUnit\Framework\TestCase;
 
 class RuleResultCollectionTest extends TestCase
 {
+    /** @dataProvider getRuleResultsProvider */
+    public function testGetRuleResults(array $expected, array $ruleResults): void
+    {
+        self::assertSame($expected, RuleResultCollection::create($ruleResults)->getRuleResults());
+    }
+
+    public function getRuleResultsProvider(): array
+    {
+        $ruleResults = [
+            '01-Rule' => $this->mockRuleResult('01-Rule'),
+            '02-Rule (#1)' => $this->mockRuleResult('02-Rule'),
+            '02-Rule (#2)' => $this->mockRuleResult('02-Rule'),
+            '03-Rule' => $this->mockRuleResult('03-Rule'),
+        ];
+
+        return [
+            'empty' => [
+                'expected' => [],
+                'ruleResults' => [],
+            ],
+            'sorted' => [
+                'expected' => array_values($ruleResults),
+                'ruleResults' => array_values($ruleResults),
+            ],
+            'unsorted' => [
+                'expected' => array_values($ruleResults),
+                'ruleResults' => [
+                    $ruleResults['02-Rule (#1)'],
+                    $ruleResults['01-Rule'],
+                    $ruleResults['02-Rule (#2)'],
+                    $ruleResults['03-Rule'],
+                ],
+            ],
+        ];
+    }
+
+    private function mockRuleResult(string $ruleName): RuleResult
+    {
+        $ruleResult = $this->createMock(RuleResult::class);
+        $rule = $this->createMock(Rule::class);
+        $rule->method('getName')->willReturn($ruleName);
+        $ruleResult->method('getRule')->willReturn($rule);
+
+        return $ruleResult;
+    }
+
     /** @dataProvider getViolationsProvider */
     public function testGetViolations(array $expected, array $ruleResults): void
     {

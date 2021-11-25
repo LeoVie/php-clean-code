@@ -22,6 +22,21 @@
       "ignore": [
         "App\\Rule\\ConcreteRule\\CCF07ConsistentIndentationCharacters::check"
       ]
+    },
+    "IncrementInteger": {
+      "ignore": [
+        "App\\Rule\\RuleResult\\RuleResultCollection::sortRuleResultsByRuleName"
+      ]
+    },
+    "DecrementInteger": {
+      "ignore": [
+        "App\\Rule\\RuleResult\\RuleResultCollection::sortRuleResultsByRuleName"
+      ]
+    },
+    "LessThan": {
+      "ignore": [
+        "App\\Rule\\RuleResult\\RuleResultCollection::sortRuleResultsByRuleName"
+      ]
     }
   },
   "tmpDir": "../cache"

@@ -2,43 +2,65 @@
 
 namespace App\Command\CheckDirectory\Output;
 
-use App\Rule\FileRuleResults;
-use Symfony\Component\Console\Output\OutputInterface;
+use App\Rule\RuleResult\Compliance;
+use App\Rule\RuleResult\RuleResult;
+use App\Rule\RuleResult\Violation;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class HumanOutput implements Output
 {
     private const FORMAT = 'human';
 
-    private OutputInterface $symfonyOutput;
+    private SymfonyStyle $symfonyStyle;
 
     public function getFormat(): string
     {
         return self::FORMAT;
     }
 
-    public function setSymfonyOutput(OutputInterface $symfonyOutput): self
+    public function setSymfonyStyle(SymfonyStyle $symfonyStyle): self
     {
-        $this->symfonyOutput = $symfonyOutput;
+        $this->symfonyStyle = $symfonyStyle;
 
         return $this;
     }
 
     public function noViolations(): self
     {
-        $this->symfonyOutput->writeln("No errors.");
+        $this->symfonyStyle->writeln("No errors.");
 
         return $this;
     }
 
+    /** @inheritDoc */
     public function fileRuleResults(array $fileRuleResultsArray): self
     {
-        $fileRuleResultsOutput = join(
-            "\n\n",
-            array_map(fn(FileRuleResults $frr): string => $frr->toString(), $fileRuleResultsArray)
-        );
+        $headers = ['State', 'Rule', 'Message'];
 
-        $this->symfonyOutput->writeln($fileRuleResultsOutput);
+        foreach ($fileRuleResultsArray as $fileRuleResults) {
+            $this->symfonyStyle->writeln(\Safe\sprintf('<comment>%s</comment>', $fileRuleResults->getPath()));
+
+            $rows = [];
+            foreach ($fileRuleResults->getRuleResultCollection()->getRuleResults() as $ruleResult) {
+                $rows[] = [
+                    $this->getStateByRuleResult($ruleResult),
+                    $ruleResult->getRule()->getName(),
+                    $ruleResult->getMessage(),
+                ];
+            }
+
+            $this->symfonyStyle->table($headers, $rows);
+        }
 
         return $this;
+    }
+
+    private function getStateByRuleResult(RuleResult $ruleResult): string
+    {
+        return match (true) {
+            $ruleResult instanceof Compliance => '<fg=white;bg=green>Compliance</>',
+            $ruleResult instanceof Violation => '<error>Violation</error>',
+            default => '<comment>WARNING</comment>'
+        };
     }
 }

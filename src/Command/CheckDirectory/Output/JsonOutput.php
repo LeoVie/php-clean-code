@@ -3,29 +3,29 @@
 namespace App\Command\CheckDirectory\Output;
 
 use App\Rule\FileRuleResults;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class JsonOutput implements Output
 {
     private const FORMAT = 'json';
 
-    private OutputInterface $symfonyOutput;
+    private SymfonyStyle $symfonyStyle;
 
     public function getFormat(): string
     {
         return self::FORMAT;
     }
 
-    public function setSymfonyOutput(OutputInterface $symfonyOutput): self
+    public function setSymfonyStyle(SymfonyStyle $symfonyStyle): self
     {
-        $this->symfonyOutput = $symfonyOutput;
+        $this->symfonyStyle = $symfonyStyle;
 
         return $this;
     }
 
     public function noViolations(): self
     {
-        $this->symfonyOutput->write(\Safe\json_encode(['violations_exist' => false]));
+        $this->symfonyStyle->write(\Safe\json_encode(['violations_exist' => false]));
 
         return $this;
     }
@@ -56,10 +56,10 @@ class JsonOutput implements Output
             }
         }
 
-        $this->symfonyOutput->writeln(\Safe\json_encode([
+        $this->symfonyStyle->writeln(\Safe\json_encode([
             'violations_exist' => $violationsExist,
             'compliances_exist' => $compliancesExist,
-            'rule_results' => $fileRuleResultsData
+            'rule_results' => $fileRuleResultsData,
         ]));
 
         return $this;

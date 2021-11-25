@@ -21,16 +21,4 @@ class FileRuleResultsTest extends TestCase
 
         self::assertSame($ruleResultCollection, FileRuleResults::create('', $ruleResultCollection)->getRuleResultCollection());
     }
-
-    public function testToString(): void
-    {
-        $expected
-            = "/var/file.php:"
-            . "\n\tRuleResultCollectionAsString";
-
-        $ruleResultCollection = $this->createMock(RuleResultCollection::class);
-        $ruleResultCollection->method('toString')->willReturn('RuleResultCollectionAsString');
-
-        self::assertSame($expected, FileRuleResults::create('/var/file.php', $ruleResultCollection)->toString());
-    }
 }
