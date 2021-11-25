@@ -2,7 +2,7 @@
 
 namespace App\Command\CheckDirectory\Output;
 
-use App\Rule\FileRuleResults;
+use App\Model\Score;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class JsonOutput implements Output
@@ -30,27 +30,35 @@ class JsonOutput implements Output
         return $this;
     }
 
-    /** @inheritDoc */
-    public function fileRuleResults(array $fileRuleResultsArray): self
+    public function fileRuleResultsAndScores(array $fileRuleResultsAndScores): self
     {
-        $fileRuleResultsData = array_values(
-            array_map(
-                fn(FileRuleResults $frr): array => $frr->jsonSerialize(),
-                $fileRuleResultsArray
-            )
-        );
+        $fileRuleResultsData = [];
+        foreach ($fileRuleResultsAndScores as $entry) {
+            $fileRuleResults = $entry['file_rule_results'];
+            $scores = $entry['scores'];
+
+            $fileRuleResultsData[] = [
+                'file_rule_results' => $fileRuleResults->jsonSerialize(),
+                'scores' => array_map(
+                    fn(Score $score): array => $score->jsonSerialize(),
+                    $scores
+                ),
+            ];
+        }
 
         $violationsExist = false;
-        foreach ($fileRuleResultsArray as $fileRuleResult) {
-            if (!empty($fileRuleResult->getRuleResultCollection()->getViolations())) {
+        foreach ($fileRuleResultsAndScores as $entry) {
+            $fileRuleResults = $entry['file_rule_results'];
+            if (!empty($fileRuleResults->getRuleResultCollection()->getViolations())) {
                 $violationsExist = true;
                 break;
             }
         }
 
         $compliancesExist = false;
-        foreach ($fileRuleResultsArray as $fileRuleResult) {
-            if (!empty($fileRuleResult->getRuleResultCollection()->getCompliances())) {
+        foreach ($fileRuleResultsAndScores as $entry) {
+            $fileRuleResults = $entry['file_rule_results'];
+            if (!empty($fileRuleResults->getRuleResultCollection()->getCompliances())) {
                 $compliancesExist = true;
                 break;
             }
