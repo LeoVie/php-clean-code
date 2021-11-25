@@ -4,7 +4,6 @@ namespace App\Command\CheckDirectory;
 
 use App\Command\CheckDirectory\Output\OutputHolder;
 use App\Rule\FileRuleResults;
-use App\Rule\RuleResult\RuleResultCollection;
 use App\Service\CleanCodeCheckerService;
 use App\Service\CleanCodeScorerService;
 use Symfony\Component\Console\Command\Command;
@@ -76,21 +75,8 @@ class CheckDirectoryCommand extends Command
             return Command::SUCCESS;
         }
 
-        $fileRuleResultsArrayToOutput = $fileRuleResultsArray;
-        if ($showOnlyViolations) {
-            $onlyViolationsFileRuleResultsArray = array_map(
-                fn(FileRuleResults $frr): FileRuleResults => FileRuleResults::create(
-                    $frr->getPath(),
-                    RuleResultCollection::create($frr->getRuleResultCollection()->getViolations()),
-                ),
-                $fileRuleResultsWithViolationsArray
-            );
-
-            $fileRuleResultsArrayToOutput = $onlyViolationsFileRuleResultsArray;
-        }
-
         $fileRuleResultsAndScores = [];
-        foreach ($fileRuleResultsArrayToOutput as $fileRuleResults) {
+        foreach ($fileRuleResultsArray as $fileRuleResults) {
             $scores = $this->cleanCodeScorerService->createScores($fileRuleResults);
             $fileRuleResultsAndScores[] = [
                 'file_rule_results' => $fileRuleResults,
@@ -98,9 +84,7 @@ class CheckDirectoryCommand extends Command
             ];
         }
 
-        $commandOutput->fileRuleResultsAndScores($fileRuleResultsAndScores);
-
-//        $commandOutput->fileRuleResults($fileRuleResultsArrayToOutput);
+        $commandOutput->fileRuleResultsAndScores($fileRuleResultsAndScores, $showOnlyViolations);
 
         return Command::FAILURE;
     }

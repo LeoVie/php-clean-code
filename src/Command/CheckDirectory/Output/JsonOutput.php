@@ -3,6 +3,7 @@
 namespace App\Command\CheckDirectory\Output;
 
 use App\Model\Score;
+use App\Rule\FileRuleResults;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class JsonOutput implements Output
@@ -30,10 +31,11 @@ class JsonOutput implements Output
         return $this;
     }
 
-    public function fileRuleResultsAndScores(array $fileRuleResultsAndScores): self
+    public function fileRuleResultsAndScores(array $fileRuleResultsAndScores, bool $showOnlyViolations): self
     {
         $fileRuleResultsData = [];
         foreach ($fileRuleResultsAndScores as $entry) {
+            /** @var FileRuleResults $fileRuleResults */
             $fileRuleResults = $entry['file_rule_results'];
             $scores = $entry['scores'];
 

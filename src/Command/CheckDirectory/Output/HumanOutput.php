@@ -34,13 +34,20 @@ class HumanOutput implements Output
         return $this;
     }
 
-    public function fileRuleResultsAndScores(array $fileRuleResultsAndScores): self
+    public function fileRuleResultsAndScores(array $fileRuleResultsAndScores, bool $showOnlyViolations): self
     {
         foreach ($fileRuleResultsAndScores as $entry) {
+            /** @var FileRuleResults $fileRuleResults */
             $fileRuleResults = $entry['file_rule_results'];
             $scores = $entry['scores'];
 
-            [$fileRuleResultsTableHeader, $fileRuleResultsTableRows] = $this->createFileRuleResultsTable($fileRuleResults);
+            if ($showOnlyViolations) {
+                if (empty($fileRuleResults->getRuleResultCollection()->getViolations())) {
+                    continue;
+                }
+            }
+
+            [$fileRuleResultsTableHeader, $fileRuleResultsTableRows] = $this->createFileRuleResultsTable($fileRuleResults, $showOnlyViolations);
             [$scoresTableHeader, $scoresTableRows] = $this->createScoresTable($scores);
 
             $this->symfonyStyle->title($fileRuleResults->getPath());
@@ -53,11 +60,18 @@ class HumanOutput implements Output
         return $this;
     }
 
-    private function createFileRuleResultsTable(FileRuleResults $fileRuleResults): array
+    private function createFileRuleResultsTable(FileRuleResults $fileRuleResults, bool $showOnlyViolations): array
     {
         $headers = ['State', 'Rule', 'Message', 'Criticality'];
         $rows = [];
-        foreach ($fileRuleResults->getRuleResultCollection()->getRuleResults() as $ruleResult) {
+
+        if ($showOnlyViolations) {
+            $ruleResults = $fileRuleResults->getRuleResultCollection()->getViolations();
+        } else {
+            $ruleResults = $fileRuleResults->getRuleResultCollection()->getRuleResults();
+        }
+
+        foreach ($ruleResults as $ruleResult) {
             $rows[] = [
                 $this->getStateByRuleResult($ruleResult),
                 $ruleResult->getRule()->getName(),
