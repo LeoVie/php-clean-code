@@ -15,12 +15,18 @@ class CCN08MeaningfulClassnames implements RuleClassNodeAware
     private const COMPLIANCE_MESSAGE_PATTERN = 'Classname "%s" is not forbidden.';
     private const FORBIDDEN_CLASSNAME_PATTERNS = [
         '@.*Manager$@',
-        '@.*Processor$@'
+        '@.*Processor$@',
     ];
+    private const CRITICALITY_FACTOR = 50;
 
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    private function getCriticalityFactor(): int
+    {
+        return self::CRITICALITY_FACTOR;
     }
 
     public function check(Class_ $class): array
@@ -37,8 +43,9 @@ class CCN08MeaningfulClassnames implements RuleClassNodeAware
                 $name,
                 $forbiddenNamePart
             );
+            $criticality = $this->getCriticalityFactor();
 
-            return [Violation::create($this, $message)];
+            return [Violation::create($this, $message, $criticality)];
         }
 
         $message = \Safe\sprintf(self::COMPLIANCE_MESSAGE_PATTERN, $name);

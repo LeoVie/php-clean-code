@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Rule\ConcreteRule;
 use App\Rule\ConcreteRule\CCF04HorizontalSizeLimit;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
+use App\Tests\TestDouble\Calculation\CriticalityCalculatorDouble;
 use PHPUnit\Framework\TestCase;
 
 class CCF04HorizontalSizeLimitTest extends TestCase
@@ -12,7 +13,7 @@ class CCF04HorizontalSizeLimitTest extends TestCase
     /** @dataProvider complianceProvider */
     public function testCompliance(string $code, string $message): void
     {
-        $rule = new CCF04HorizontalSizeLimit();
+        $rule = new CCF04HorizontalSizeLimit(new CriticalityCalculatorDouble());
 
         self::assertEquals(
             [Compliance::create($rule, $message)],
@@ -38,11 +39,11 @@ class CCF04HorizontalSizeLimitTest extends TestCase
     /** @dataProvider violationProvider */
     public function testViolation(string $code, array $messages): void
     {
-        $rule = new CCF04HorizontalSizeLimit();
+        $rule = new CCF04HorizontalSizeLimit(new CriticalityCalculatorDouble());
 
         $expected = [];
         foreach ($messages as $message) {
-            $expected[] = Violation::create($rule, $message);
+            $expected[] = Violation::create($rule, $message, 10.0);
         }
 
         self::assertEquals(

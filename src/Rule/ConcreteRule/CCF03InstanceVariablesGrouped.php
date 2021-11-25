@@ -2,7 +2,7 @@
 
 namespace App\Rule\ConcreteRule;
 
-use App\Rule\RuleConcept\Rule;
+use App\Calculation\CalculatorConcept\CriticalityCalculator;
 use App\Rule\RuleConcept\RuleClassNodeAware;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
@@ -12,42 +12,78 @@ use PhpParser\Node\Stmt\Property;
 class CCF03InstanceVariablesGrouped implements RuleClassNodeAware
 {
     private const NAME = 'CC-F-03 Instance Variables Grouped';
-    private const VIOLATION_MESSAGE_PATTERN = 'Class "%s" has ungrouped instance variables.';
+    private const VIOLATION_MESSAGE_PATTERN = 'Class "%s" has ungrouped instance variables (%d groups).';
     private const COMPLIANCE_MESSAGE_PATTERN = 'Class "%s" has no ungrouped instance variables.';
+    private const CRITICALITY_FACTOR = 100;
+    private const MAX_COUNT_OF_INSTANCE_VARIABLE_GROUPS = 1;
+
+    public function __construct(private CriticalityCalculator $criticalityCalculator)
+    {
+    }
 
     public function getName(): string
     {
         return self::NAME;
     }
 
+    private function getCriticalityFactor(): int
+    {
+        return self::CRITICALITY_FACTOR;
+    }
+
+    private function getMaxCountOfInstanceVariableGroups(): int
+    {
+        return self::MAX_COUNT_OF_INSTANCE_VARIABLE_GROUPS;
+    }
+
     public function check(Class_ $class): array
     {
-        $currentlyInInstanceVariableGroup = false;
-        $instanceVariableGroupFinished = false;
-        foreach ($class->stmts as $stmt) {
-            if (!$stmt instanceof Property) {
-                if ($currentlyInInstanceVariableGroup) {
-                    $instanceVariableGroupFinished = true;
-                }
-                continue;
-            }
+        $countOfInstanceVariableGroups = $this->calculateCountOfInstanceVariableGroups($class);
 
-            if ($instanceVariableGroupFinished) {
-                $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $class);
+        if ($countOfInstanceVariableGroups > $this->getMaxCountOfInstanceVariableGroups()) {
+            $message = $this->buildViolationMessage($class, $countOfInstanceVariableGroups);
 
-                return [Violation::create($this, $message)];
-            }
+            $criticality = $this->criticalityCalculator->calculate(
+                $countOfInstanceVariableGroups,
+                $this->getMaxCountOfInstanceVariableGroups(),
+                $this->getCriticalityFactor()
+            );
 
-            $currentlyInInstanceVariableGroup = true;
+            return [Violation::create($this, $message, $criticality)];
         }
 
-        $message = $this->buildMessage(self::COMPLIANCE_MESSAGE_PATTERN, $class);
+        $message = $this->buildComplianceMessage($class);
 
         return [Compliance::create($this, $message)];
     }
 
-    private function buildMessage(string $pattern, Class_ $class): string
+    private function calculateCountOfInstanceVariableGroups(Class_ $class): int
     {
-        return \Safe\sprintf($pattern, $class->name);
+        $currentGroupIndex = null;
+        $groups = [];
+
+        foreach ($class->stmts as $i => $statement) {
+            if (!$statement instanceof Property) {
+                $currentGroupIndex = null;
+                continue;
+            }
+
+            if ($currentGroupIndex === null) {
+                $currentGroupIndex = $i;
+            }
+            $groups[$currentGroupIndex][] = $statement;
+        }
+
+        return count($groups);
+    }
+
+    private function buildViolationMessage(Class_ $class, int $countOfInstanceVariableGroups): string
+    {
+        return \Safe\sprintf(self::VIOLATION_MESSAGE_PATTERN, $class->name, $countOfInstanceVariableGroups);
+    }
+
+    private function buildComplianceMessage(Class_ $class): string
+    {
+        return \Safe\sprintf(self::COMPLIANCE_MESSAGE_PATTERN, $class->name);
     }
 }

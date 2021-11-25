@@ -35,7 +35,7 @@ class HumanOutput implements Output
     /** @inheritDoc */
     public function fileRuleResults(array $fileRuleResultsArray): self
     {
-        $headers = ['State', 'Rule', 'Message'];
+        $headers = ['State', 'Rule', 'Message', 'Criticality'];
 
         foreach ($fileRuleResultsArray as $fileRuleResults) {
             $this->symfonyStyle->writeln(\Safe\sprintf('<comment>%s</comment>', $fileRuleResults->getPath()));
@@ -46,6 +46,7 @@ class HumanOutput implements Output
                     $this->getStateByRuleResult($ruleResult),
                     $ruleResult->getRule()->getName(),
                     $ruleResult->getMessage(),
+                    $ruleResult->getCriticality() . ' %'
                 ];
             }
 

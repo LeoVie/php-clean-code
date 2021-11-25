@@ -22,4 +22,9 @@ class Line
     {
         return $this->content;
     }
+
+    public function length(): int
+    {
+        return strlen($this->content);
+    }
 }

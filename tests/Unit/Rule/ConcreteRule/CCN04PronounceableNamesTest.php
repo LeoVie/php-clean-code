@@ -84,7 +84,7 @@ class CCN04PronounceableNamesTest extends TestCase
         $rule = new CCN04PronounceableNames();
 
         self::assertEquals(
-            [Violation::create($rule, $message)],
+            [Violation::create($rule, $message, 50.0)],
             $rule->check($node)
         );
     }

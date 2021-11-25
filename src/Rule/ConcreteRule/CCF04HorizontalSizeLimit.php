@@ -2,6 +2,7 @@
 
 namespace App\Rule\ConcreteRule;
 
+use App\Calculation\CalculatorConcept\CriticalityCalculator;
 use App\Model\Line;
 use App\Rule\RuleConcept\RuleFileCodeAware;
 use App\Rule\RuleResult\Compliance;
@@ -10,13 +11,28 @@ use App\Rule\RuleResult\Violation;
 class CCF04HorizontalSizeLimit implements RuleFileCodeAware
 {
     private const NAME = 'CC-F-04 Horizontal Size Limit';
-    private const MAX_HORIZONTAL_SIZE = 120;
     private const VIOLATION_MESSAGE_PATTERN = 'Line %d has %d characters more than allowed.';
     private const COMPLIANCE_MESSAGE_PATTERN = 'No too long lines exist in code.';
+    private const CRITICALITY_FACTOR = 50;
+    private const MAX_HORIZONTAL_SIZE = 120;
+
+    public function __construct(private CriticalityCalculator $criticalityCalculator)
+    {
+    }
 
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    private function getCriticalityFactor(): int
+    {
+        return self::CRITICALITY_FACTOR;
+    }
+
+    private function getMaxHorizontalSize(): int
+    {
+        return self::MAX_HORIZONTAL_SIZE;
     }
 
     public function check(string $code): array
@@ -31,9 +47,15 @@ class CCF04HorizontalSizeLimit implements RuleFileCodeAware
 
         $violations = [];
         foreach ($tooLongLines as $tooLongLine) {
-            $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $tooLongLine);
+            $message = $this->buildViolationMessage($tooLongLine);
 
-            $violations[] = Violation::create($this, $message);
+            $criticality = $this->criticalityCalculator->calculate(
+                $tooLongLine->length(),
+                $this->getMaxHorizontalSize(),
+                $this->getCriticalityFactor()
+            );
+
+            $violations[] = Violation::create($this, $message, $criticality);
         }
 
         return $violations;
@@ -55,15 +77,15 @@ class CCF04HorizontalSizeLimit implements RuleFileCodeAware
 
     private function isLineTooLong(string $line): bool
     {
-        return strlen($line) > self::MAX_HORIZONTAL_SIZE;
+        return strlen($line) > $this->getMaxHorizontalSize();
     }
 
-    private function buildMessage(string $pattern, Line $line): string
+    private function buildViolationMessage(Line $line): string
     {
         return \Safe\sprintf(
-            $pattern,
+            self::VIOLATION_MESSAGE_PATTERN,
             $line->getLineNumber(),
-            abs(strlen($line->getContent()) - self::MAX_HORIZONTAL_SIZE)
+            $line->length() - $this->getMaxHorizontalSize(),
         );
     }
 }

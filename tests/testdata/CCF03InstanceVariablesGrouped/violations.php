@@ -10,4 +10,11 @@ class Foo
     }
 
     private int $age = 10;
+
+    public function foo(): int
+    {
+        return 1;
+    }
+
+    private string $bla = 'abc';
 }

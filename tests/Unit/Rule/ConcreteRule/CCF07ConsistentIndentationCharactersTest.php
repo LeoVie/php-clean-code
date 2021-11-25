@@ -36,7 +36,7 @@ class CCF07ConsistentIndentationCharactersTest extends TestCase
         $rule = new CCF07ConsistentIndentationCharacters();
 
         $violations = array_map(
-            fn(string $message): Violation => Violation::create($rule, $message),
+            fn(string $message): Violation => Violation::create($rule, $message, 5.0),
             $messages
         );
 

@@ -25,6 +25,11 @@ class Compliance implements RuleResult
         return $this->message;
     }
 
+    public function getCriticality(): ?float
+    {
+        return null;
+    }
+
     public function jsonSerialize(): array
     {
         return [

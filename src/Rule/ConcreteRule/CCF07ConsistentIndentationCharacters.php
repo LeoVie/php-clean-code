@@ -13,10 +13,16 @@ class CCF07ConsistentIndentationCharacters implements RuleFileCodeAware
     private const VIOLATION_MESSAGE_PATTERN = 'Line %d uses "%s" (ascii %s) for indentation, but should use "%s" (ascii %s).';
     private const COMPLIANCE_MESSAGE_PATTERN = 'Code is properly indented (all lines use "%s" (ascii %s) for indentation).';
     private const ACTUAL_INDENTATION_PATTERN = '@^\s+@';
+    private const CRITICALITY_FACTOR = 5;
 
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    private function getCriticalityFactor(): int
+    {
+        return self::CRITICALITY_FACTOR;
     }
 
     public function check(string $code): array
@@ -49,7 +55,8 @@ class CCF07ConsistentIndentationCharacters implements RuleFileCodeAware
                 $allowedIndentationCharacterSequenceAscii
             );
 
-            $violations[] = Violation::create($this, $message);
+            $criticality = $this->getCriticalityFactor();
+            $violations[] = Violation::create($this, $message, $criticality);
         }
 
         if (!empty($violations)) {

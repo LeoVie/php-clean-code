@@ -15,10 +15,16 @@ class CCN04PronounceableNames implements RuleNameNodeAware
     private const VIOLATION_MESSAGE_PATTERN = 'Name "%s" in line %d seems to be unpronounceable.';
     private const COMPLIANCE_MESSAGE_PATTERN = 'Name "%s" in line %d seems to be pronounceable.';
     private const NODE_IS_EXPRESSION_MESSAGE_PATTERN = 'Name is an expression and therefore pronounceable by definition.';
+    private const CRITICALITY_FACTOR = 50;
 
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    private function getCriticalityFactor(): int
+    {
+        return self::CRITICALITY_FACTOR;
     }
 
     public function check(Identifier|Variable $node): array
@@ -30,8 +36,9 @@ class CCN04PronounceableNames implements RuleNameNodeAware
 
         if ($this->stringSeemsUnpronounceable($name)) {
             $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $name, $node);
+            $criticality = $this->getCriticalityFactor();
 
-            return [Violation::create($this, $message)];
+            return [Violation::create($this, $message, $criticality)];
         }
 
         $message = $this->buildMessage(self::COMPLIANCE_MESSAGE_PATTERN, $name, $node);

@@ -2,9 +2,11 @@
 
 namespace App\Tests\Unit\Rule\ConcreteRule;
 
+use App\Calculation\AmountCalculator;
 use App\Rule\ConcreteRule\CCK01SpareComments;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
+use App\Tests\TestDouble\Calculation\CriticalityCalculatorDouble;
 use LeoVie\PhpTokenNormalize\Model\TokenSequence;
 use PHPUnit\Framework\TestCase;
 
@@ -13,7 +15,7 @@ class CCK01SpareCommentsTest extends TestCase
     /** @dataProvider complianceProvider */
     public function testCompliance(TokenSequence $tokenSequence, string $message): void
     {
-        $rule = new CCK01SpareComments();
+        $rule = new CCK01SpareComments(new CriticalityCalculatorDouble(), new AmountCalculator());
 
         self::assertEquals(
             [Compliance::create($rule, $message)],
@@ -39,10 +41,10 @@ class CCK01SpareCommentsTest extends TestCase
     /** @dataProvider violationProvider */
     public function testViolation(TokenSequence $tokenSequence, string $message): void
     {
-        $rule = new CCK01SpareComments();
+        $rule = new CCK01SpareComments(new CriticalityCalculatorDouble(), new AmountCalculator());
 
         self::assertEquals(
-            [Violation::create($rule, $message)],
+            [Violation::create($rule, $message, 10.0)],
             $rule->check($tokenSequence)
         );
     }

@@ -2,6 +2,7 @@
 
 namespace App\Rule\ConcreteRule;
 
+use App\Calculation\CalculatorConcept\CriticalityCalculator;
 use App\Rule\RuleConcept\RuleFileCodeAware;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
@@ -9,13 +10,28 @@ use App\Rule\RuleResult\Violation;
 class CCF01VerticalSizeLimit implements RuleFileCodeAware
 {
     private const NAME = 'CC-F-01 Vertical Size Limit';
-    private const MAX_VERTICAL_SIZE = 500;
     private const VIOLATION_MESSAGE_PATTERN = 'File has %d lines more than allowed.';
-    private const COMPLIANCE_MESSAGE_PATTERN = 'File has %d lines less than allowed maximum.';
+    private const COMPLIANCE_MESSAGE_PATTERN = 'File has %d lines.';
+    private const CRITICALITY_FACTOR = 50;
+    private const MAX_VERTICAL_SIZE = 500;
+
+    public function __construct(private CriticalityCalculator $criticalityCalculator)
+    {
+    }
 
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    private function getCriticalityFactor(): int
+    {
+        return self::CRITICALITY_FACTOR;
+    }
+
+    private function getMaxVerticalSize(): int
+    {
+        return self::MAX_VERTICAL_SIZE;
     }
 
     public function check(string $code): array
@@ -23,18 +39,30 @@ class CCF01VerticalSizeLimit implements RuleFileCodeAware
         $lines = explode("\n", $code);
         $linesCount = count($lines);
 
-        if ($linesCount > self::MAX_VERTICAL_SIZE) {
-            $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $linesCount);
+        if ($linesCount > $this->getMaxVerticalSize()) {
+            $message = $this->buildViolationMessage($linesCount);
 
-            return [Violation::create($this, $message)];
+            $criticality = $this->criticalityCalculator->calculate(
+                $linesCount,
+                $this->getMaxVerticalSize(),
+                $this->getCriticalityFactor()
+            );
+
+            return [Violation::create($this, $message, $criticality)];
         }
 
-        $message = $this->buildMessage(self::COMPLIANCE_MESSAGE_PATTERN, $linesCount);
+        $message = $this->buildComplianceMessage($linesCount);
+
         return [Compliance::create($this, $message)];
     }
 
-    private function buildMessage(string $pattern, int $linesCount): string
+    private function buildViolationMessage(int $linesCount): string
     {
-        return \Safe\sprintf($pattern, abs($linesCount - self::MAX_VERTICAL_SIZE));
+        return \Safe\sprintf(self::VIOLATION_MESSAGE_PATTERN, $linesCount - $this->getMaxVerticalSize());
+    }
+
+    private function buildComplianceMessage(int $linesCount): string
+    {
+        return \Safe\sprintf(self::COMPLIANCE_MESSAGE_PATTERN, $linesCount);
     }
 }

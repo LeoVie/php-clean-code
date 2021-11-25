@@ -10,5 +10,7 @@ interface RuleResult extends \JsonSerializable
 
     public function getMessage(): string;
 
+    public function getCriticality(): ?float;
+
     public function jsonSerialize(): array;
 }

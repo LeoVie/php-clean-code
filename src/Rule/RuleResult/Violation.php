@@ -8,14 +8,15 @@ class Violation implements RuleResult
 {
     private function __construct(
         private Rule   $rule,
-        private string $message
+        private string $message,
+        private float    $criticality
     )
     {
     }
 
-    public static function create(Rule $rule, string $message): self
+    public static function create(Rule $rule, string $message, float $criticality): self
     {
-        return new self($rule, $message);
+        return new self($rule, $message, $criticality);
     }
 
     public function getRule(): Rule
@@ -28,17 +29,18 @@ class Violation implements RuleResult
         return $this->message;
     }
 
+    public function getCriticality(): ?float
+    {
+        return $this->criticality;
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'type' => 'violation',
             'rule' => $this->rule->getName(),
             'message' => $this->message,
+            'criticality' => $this->criticality
         ];
-    }
-
-    public function toString(): string
-    {
-        return \Safe\sprintf("- %s: ❎ (%s)", $this->rule->getName(), $this->message);
     }
 }
