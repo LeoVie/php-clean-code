@@ -10,13 +10,13 @@ use PHPUnit\Framework\TestCase;
 class CCF07ConsistentIndentationCharactersTest extends TestCase
 {
     /** @dataProvider complianceProvider */
-    public function testCompliance(string $code, string $message): void
+    public function testCompliance(array $lines, string $message): void
     {
         $rule = new CCF07ConsistentIndentationCharacters();
 
         self::assertEquals(
             [Compliance::create($rule, $message)],
-            $rule->check($code)
+            $rule->check($lines)
         );
     }
 
@@ -24,14 +24,14 @@ class CCF07ConsistentIndentationCharactersTest extends TestCase
     {
         return [
             [
-                'code' => '    properly indented',
+                'lines' => ['    properly indented'],
                 'message' => 'Code is properly indented (all lines use "    " (ascii 32, 32, 32, 32) for indentation).'
             ],
         ];
     }
 
     /** @dataProvider violationProvider */
-    public function testViolation(string $code, array $messages): void
+    public function testViolation(array $lines, array $messages): void
     {
         $rule = new CCF07ConsistentIndentationCharacters();
 
@@ -42,7 +42,7 @@ class CCF07ConsistentIndentationCharactersTest extends TestCase
 
         self::assertEquals(
             $violations,
-            $rule->check($code)
+            $rule->check($lines)
         );
     }
 
@@ -50,12 +50,12 @@ class CCF07ConsistentIndentationCharactersTest extends TestCase
     {
         return [
             [
-                'code' =>
-                    "  not enough spaces\n"
-                    . "     too many spaces\n"
-                    . "not indented\n"
-                    . "	tab"
-                ,
+                'lines' => [
+                    '  not enough spaces',
+                    '     too many spaces',
+                    'not indented',
+                    '	tab'
+                ],
                 'messages' => [
                     'Line 1 uses "  " (ascii 32, 32) for indentation, but should use "    " (ascii 32, 32, 32, 32).',
                     'Line 2 uses "     " (ascii 32, 32, 32, 32, 32) for indentation, but should use "    " (ascii 32, 32, 32, 32).',

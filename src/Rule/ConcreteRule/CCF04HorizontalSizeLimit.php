@@ -4,11 +4,11 @@ namespace App\Rule\ConcreteRule;
 
 use App\Calculation\CalculatorConcept\CriticalityCalculator;
 use App\Model\Line;
-use App\Rule\RuleConcept\RuleFileCodeAware;
+use App\Rule\RuleConcept\RuleLinesAware;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
 
-class CCF04HorizontalSizeLimit implements RuleFileCodeAware
+class CCF04HorizontalSizeLimit implements RuleLinesAware
 {
     private const NAME = 'CC-F-04 Horizontal Size Limit';
     private const VIOLATION_MESSAGE_PATTERN = 'Line %d has %d characters more than allowed.';
@@ -35,9 +35,9 @@ class CCF04HorizontalSizeLimit implements RuleFileCodeAware
         return self::MAX_HORIZONTAL_SIZE;
     }
 
-    public function check(string $code): array
+    public function check(array $lines): array
     {
-        $tooLongLines = $this->extractTooLongLines($code);
+        $tooLongLines = $this->extractTooLongLines($lines);
 
         if (empty($tooLongLines)) {
             $message = self::COMPLIANCE_MESSAGE_PATTERN;
@@ -61,12 +61,15 @@ class CCF04HorizontalSizeLimit implements RuleFileCodeAware
         return $violations;
     }
 
-    /** @return Line[] */
-    private function extractTooLongLines(string $code): array
+    /**
+     * @param string[] $lines
+     *
+     * @return Line[]
+     */
+    private function extractTooLongLines(array $lines): array
     {
         $tooLongLines = [];
-        foreach (explode("\n", $code) as $lineNumber => $lineContent) {
-            $lineContent = rtrim($lineContent);
+        foreach ($lines as $lineNumber => $lineContent) {
             if ($this->isLineTooLong($lineContent)) {
                 $tooLongLines[] = Line::fromLineIndexAndContent($lineNumber, $lineContent);
             }

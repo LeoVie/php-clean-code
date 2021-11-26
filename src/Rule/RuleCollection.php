@@ -5,6 +5,7 @@ namespace App\Rule;
 use App\Rule\RuleConcept\Rule;
 use App\Rule\RuleConcept\RuleClassNodeAware;
 use App\Rule\RuleConcept\RuleFileCodeAware;
+use App\Rule\RuleConcept\RuleLinesAware;
 use App\Rule\RuleConcept\RuleNameNodeAware;
 use App\Rule\RuleConcept\RuleTokenSequenceAware;
 
@@ -13,7 +14,7 @@ class RuleCollection
     /** @var Rule[][] */
     private array $rules = [];
 
-    /** @param iterable<RuleClassNodeAware|RuleFileCodeAware|RuleTokenSequenceAware|RuleNameNodeAware> $rules */
+    /** @param iterable<RuleClassNodeAware|RuleFileCodeAware|RuleTokenSequenceAware|RuleNameNodeAware|RuleLinesAware> $rules */
     public function __construct(iterable $rules)
     {
         foreach ($rules as $rule) {
@@ -25,7 +26,7 @@ class RuleCollection
     public function getClassNodeAwareRules(): array
     {
         /** @var RuleClassNodeAware[] $rules */
-        $rules = $this->rules[Rule::CLASS_NODE_AWARE];
+        $rules = $this->rules[Rule::CLASS_NODE_AWARE] ?? [];
 
         return $rules;
     }
@@ -34,7 +35,7 @@ class RuleCollection
     public function getFileCodeAwareRules(): array
     {
         /** @var RuleFileCodeAware[] $rules */
-        $rules = $this->rules[Rule::FILE_CODE_AWARE];
+        $rules = $this->rules[Rule::FILE_CODE_AWARE] ?? [];
 
         return $rules;
     }
@@ -43,7 +44,7 @@ class RuleCollection
     public function getTokenSequenceAwareRules(): array
     {
         /** @var RuleTokenSequenceAware[] $rules */
-        $rules = $this->rules[Rule::TOKEN_SEQUENCE_AWARE];
+        $rules = $this->rules[Rule::TOKEN_SEQUENCE_AWARE] ?? [];
 
         return $rules;
     }
@@ -52,7 +53,16 @@ class RuleCollection
     public function getNameNodeAwareRules(): array
     {
         /** @var RuleNameNodeAware[] $rules */
-        $rules = $this->rules[Rule::NAME_NODE_AWARE];
+        $rules = $this->rules[Rule::NAME_NODE_AWARE] ?? [];
+
+        return $rules;
+    }
+
+    /** @return RuleLinesAware[] */
+    public function getLinesAwareRules(): array
+    {
+        /** @var RuleLinesAware[] $rules */
+        $rules = $this->rules[Rule::LINES_AWARE] ?? [];
 
         return $rules;
     }

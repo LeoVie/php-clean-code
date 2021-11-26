@@ -18,13 +18,13 @@ class CCF01VerticalSizeLimitTest extends TestCase
     }
 
     /** @dataProvider complianceProvider */
-    public function testCompliance(string $code, string $message): void
+    public function testCompliance(array $lines, string $message): void
     {
         $rule = new CCF01VerticalSizeLimit(new CriticalityCalculatorDouble());
 
         self::assertEquals(
             [Compliance::create($rule, $message)],
-            $rule->check($code)
+            $rule->check($lines)
         );
     }
 
@@ -32,24 +32,24 @@ class CCF01VerticalSizeLimitTest extends TestCase
     {
         return [
             [
-                'code' => "line",
+                'lines' => ['line'],
                 'message' => 'File has 1 lines.',
             ],
             [
-                'code' => trim(str_repeat("line\n", 500)),
+                'lines' => array_fill(0, 500, 'line'),
                 'message' => 'File has 500 lines.',
             ],
         ];
     }
 
     /** @dataProvider violationProvider */
-    public function testViolation(string $code, string $message): void
+    public function testViolation(array $lines, string $message): void
     {
         $rule = new CCF01VerticalSizeLimit(new CriticalityCalculatorDouble());
 
         self::assertEquals(
             [Violation::create($rule, $message, 10.0)],
-            $rule->check($code)
+            $rule->check($lines)
         );
     }
 
@@ -57,7 +57,7 @@ class CCF01VerticalSizeLimitTest extends TestCase
     {
         return [
             [
-                'code' => trim(str_repeat("line\n", 501)),
+                'lines' => array_fill(0, 501, 'line'),
                 'message' => 'File has 1 lines more than allowed.',
             ],
         ];

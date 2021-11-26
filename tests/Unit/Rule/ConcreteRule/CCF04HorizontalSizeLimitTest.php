@@ -11,13 +11,13 @@ use PHPUnit\Framework\TestCase;
 class CCF04HorizontalSizeLimitTest extends TestCase
 {
     /** @dataProvider complianceProvider */
-    public function testCompliance(string $code, string $message): void
+    public function testCompliance(array $lines, string $message): void
     {
         $rule = new CCF04HorizontalSizeLimit(new CriticalityCalculatorDouble());
 
         self::assertEquals(
             [Compliance::create($rule, $message)],
-            $rule->check($code)
+            $rule->check($lines)
         );
     }
 
@@ -25,19 +25,17 @@ class CCF04HorizontalSizeLimitTest extends TestCase
     {
         return [
             [
-                'code' => join("\n",
-                    [
-                        'this is not too long',
-                        'and this neither',
-                    ]
-                ),
+                'lines' => [
+                    'this is not too long',
+                    'and this neither',
+                ],
                 'message' => 'No too long lines exist in code.',
             ],
         ];
     }
 
     /** @dataProvider violationProvider */
-    public function testViolation(string $code, array $messages): void
+    public function testViolation(array $lines, array $messages): void
     {
         $rule = new CCF04HorizontalSizeLimit(new CriticalityCalculatorDouble());
 
@@ -48,7 +46,7 @@ class CCF04HorizontalSizeLimitTest extends TestCase
 
         self::assertEquals(
             $expected,
-            $rule->check($code)
+            $rule->check($lines)
         );
     }
 
@@ -56,17 +54,14 @@ class CCF04HorizontalSizeLimitTest extends TestCase
     {
         return [
             [
-                'code' => join("\n",
-                    [
-                        'line with 130 chars---------------------------------------------------------------------------------------------------------------',
-                        'line with 120 chars-----------------------------------------------------------------------------------------------------',
-                        "line with 120 chars + tab-----------------------------------------------------------------------------------------------\t",
-                        'line with 121 chars------------------------------------------------------------------------------------------------------',
-                    ]
-                ),
+                'lines' => [
+                    'line with 130 chars---------------------------------------------------------------------------------------------------------------',
+                    'line with 120 chars-----------------------------------------------------------------------------------------------------',
+                    'line with 121 chars------------------------------------------------------------------------------------------------------',
+                ],
                 'messages' => [
                     'Line 1 has 10 characters more than allowed.',
-                    'Line 4 has 1 characters more than allowed.',
+                    'Line 3 has 1 characters more than allowed.',
                 ],
             ],
         ];

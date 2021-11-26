@@ -3,11 +3,11 @@
 namespace App\Rule\ConcreteRule;
 
 use App\Calculation\CalculatorConcept\CriticalityCalculator;
-use App\Rule\RuleConcept\RuleFileCodeAware;
+use App\Rule\RuleConcept\RuleLinesAware;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
 
-class CCF01VerticalSizeLimit implements RuleFileCodeAware
+class CCF01VerticalSizeLimit implements RuleLinesAware
 {
     private const NAME = 'CC-F-01 Vertical Size Limit';
     private const VIOLATION_MESSAGE_PATTERN = 'File has %d lines more than allowed.';
@@ -34,9 +34,9 @@ class CCF01VerticalSizeLimit implements RuleFileCodeAware
         return self::MAX_VERTICAL_SIZE;
     }
 
-    public function check(string $code): array
+    /** @inheritDoc */
+    public function check(array $lines): array
     {
-        $lines = explode("\n", $code);
         $linesCount = count($lines);
 
         if ($linesCount > $this->getMaxVerticalSize()) {

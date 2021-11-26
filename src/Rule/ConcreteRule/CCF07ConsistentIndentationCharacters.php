@@ -3,10 +3,11 @@
 namespace App\Rule\ConcreteRule;
 
 use App\Rule\RuleConcept\RuleFileCodeAware;
+use App\Rule\RuleConcept\RuleLinesAware;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
 
-class CCF07ConsistentIndentationCharacters implements RuleFileCodeAware
+class CCF07ConsistentIndentationCharacters implements RuleLinesAware
 {
     private const NAME = 'CC-F-07 Consistent Indentation Characters';
     private const ALLOWED_INDENTATION_CHARACTER_SEQUENCE = '    ';
@@ -25,14 +26,12 @@ class CCF07ConsistentIndentationCharacters implements RuleFileCodeAware
         return self::CRITICALITY_FACTOR;
     }
 
-    public function check(string $code): array
+    public function check(array $lines): array
     {
         $allowedIndentationCharacterSequenceAscii = $this->stringToAsciiList(self::ALLOWED_INDENTATION_CHARACTER_SEQUENCE);
 
         $violations = [];
-        $lines = explode("\n", $code);
         foreach ($lines as $i => $line) {
-            $line = rtrim($line);
             $ltrimmedLine = $this->ltrimIndentationCharacters($line);
 
             $startsWithWhitespaceCharacter = $this->startsWithWhitespaceCharacter($ltrimmedLine);

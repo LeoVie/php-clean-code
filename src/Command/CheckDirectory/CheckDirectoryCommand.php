@@ -74,7 +74,8 @@ class CheckDirectoryCommand extends Command
         $fileRuleResultsWithViolationsArray = $this->filterOutResultsWithNoViolations($fileRuleResultsArray);
 
         if (empty($fileRuleResultsWithViolationsArray)) {
-            $commandOutput->noViolations();
+            $commandOutput->noViolations()
+                ->stopTime($stopwatch->stop('check-directory'));
 
             return Command::SUCCESS;
         }
@@ -84,9 +85,8 @@ class CheckDirectoryCommand extends Command
             $scoresResults[] = $this->cleanCodeScorerService->createScoresResult($fileRuleResults);
         }
 
-        $commandOutput->scoresResults($scoresResults, $showOnlyViolations);
-
-        $commandOutput->stopTime($stopwatch->stop('check-directory'));
+        $commandOutput->scoresResults($scoresResults, $showOnlyViolations)
+            ->stopTime($stopwatch->stop('check-directory'));
 
         return Command::FAILURE;
     }

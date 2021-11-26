@@ -59,6 +59,15 @@ class CleanCodeCheckerService
             );
         }
 
+        $lines = explode("\n", $fileCode);
+        $lines = array_map(fn(string $line): string => rtrim($line), $lines);
+        foreach ($this->ruleCollection->getLinesAwareRules() as $rule) {
+            $ruleResults = array_merge(
+                $ruleResults,
+                $rule->check($lines)
+            );
+        }
+
         $tokenSequence = TokenSequence::create(\PhpToken::tokenize($fileCode));
         foreach ($this->ruleCollection->getTokenSequenceAwareRules() as $rule) {
             $ruleResults = array_merge(
