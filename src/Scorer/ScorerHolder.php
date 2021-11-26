@@ -2,16 +2,14 @@
 
 namespace App\Scorer;
 
-use App\Model\Score;
-
 class ScorerHolder
 {
-    /** @param iterable<Score> $scorers */
+    /** @param \Iterator<Scorer> $scorers */
     public function __construct(private iterable $scorers)
     {
     }
 
-    /** @return Score[] */
+    /** @return Scorer[] */
     public function getScorers(): array
     {
         return iterator_to_array($this->scorers);

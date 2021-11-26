@@ -75,16 +75,12 @@ class CheckDirectoryCommand extends Command
             return Command::SUCCESS;
         }
 
-        $fileRuleResultsAndScores = [];
+        $scoresResults = [];
         foreach ($fileRuleResultsArray as $fileRuleResults) {
-            $scores = $this->cleanCodeScorerService->createScores($fileRuleResults);
-            $fileRuleResultsAndScores[] = [
-                'file_rule_results' => $fileRuleResults,
-                'scores' => $scores,
-            ];
+            $scoresResults[] = $this->cleanCodeScorerService->createScoresResult($fileRuleResults);
         }
 
-        $commandOutput->fileRuleResultsAndScores($fileRuleResultsAndScores, $showOnlyViolations);
+        $commandOutput->scoresResults($scoresResults, $showOnlyViolations);
 
         return Command::FAILURE;
     }

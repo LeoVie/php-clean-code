@@ -2,6 +2,7 @@
 
 namespace App\Command\CheckDirectory\Output;
 
+use App\Command\CheckDirectory\Output\Helper\Model\Table;
 use App\Model\Score;
 use App\Rule\FileRuleResults;
 use App\Rule\RuleResult\Compliance;
@@ -34,12 +35,11 @@ class HumanOutput implements Output
         return $this;
     }
 
-    public function fileRuleResultsAndScores(array $fileRuleResultsAndScores, bool $showOnlyViolations): self
+    /** @inheritDoc */
+    public function scoresResults(array $scoresResults, bool $showOnlyViolations): self
     {
-        foreach ($fileRuleResultsAndScores as $entry) {
-            /** @var FileRuleResults $fileRuleResults */
-            $fileRuleResults = $entry['file_rule_results'];
-            $scores = $entry['scores'];
+        foreach ($scoresResults as $scoresResult) {
+            $fileRuleResults = $scoresResult->getFileRuleResults();
 
             if ($showOnlyViolations) {
                 if (empty($fileRuleResults->getRuleResultCollection()->getViolations())) {
@@ -47,55 +47,58 @@ class HumanOutput implements Output
                 }
             }
 
-            [$fileRuleResultsTableHeader, $fileRuleResultsTableRows] = $this->createFileRuleResultsTable($fileRuleResults, $showOnlyViolations);
-            [$scoresTableHeader, $scoresTableRows] = $this->createScoresTable($scores);
+            $fileRuleResultsTable = $this->createFileRuleResultsTable($fileRuleResults, $showOnlyViolations);
+            $scoresTable = $this->createScoresTable($scoresResult->getScores());
 
             $this->symfonyStyle->title($fileRuleResults->getPath());
             $this->symfonyStyle->section('Clean Code Results');
-            $this->symfonyStyle->table($fileRuleResultsTableHeader, $fileRuleResultsTableRows);
+            $this->symfonyStyle->table($fileRuleResultsTable->getHeader(), $fileRuleResultsTable->getRows());
             $this->symfonyStyle->section('Scores');
-            $this->symfonyStyle->table($scoresTableHeader, $scoresTableRows);
+            $this->symfonyStyle->table($scoresTable->getHeader(), $scoresTable->getRows());
         }
 
         return $this;
     }
 
-    private function createFileRuleResultsTable(FileRuleResults $fileRuleResults, bool $showOnlyViolations): array
+    private function createFileRuleResultsTable(FileRuleResults $fileRuleResults, bool $showOnlyViolations): Table
     {
-        $headers = ['State', 'Rule', 'Message', 'Criticality'];
-        $rows = [];
+        $ruleResults = $this->extractRuleResultsFromFileRuleResults($fileRuleResults, $showOnlyViolations);
 
-        if ($showOnlyViolations) {
-            $ruleResults = $fileRuleResults->getRuleResultCollection()->getViolations();
-        } else {
-            $ruleResults = $fileRuleResults->getRuleResultCollection()->getRuleResults();
-        }
-
+        $table = Table::create(['State', 'Rule', 'Message', 'Criticality']);
         foreach ($ruleResults as $ruleResult) {
-            $rows[] = [
+            $table->addRow([
                 $this->getStateByRuleResult($ruleResult),
                 $ruleResult->getRule()->getName(),
                 $ruleResult->getMessage(),
                 $ruleResult->getCriticality() . ' %',
-            ];
+            ]);
         }
 
-        return [$headers, $rows];
+        return $table;
+    }
+
+    /** @return RuleResult[] */
+    private function extractRuleResultsFromFileRuleResults(FileRuleResults $fileRuleResults, bool $onlyViolations): array
+    {
+        if ($onlyViolations) {
+            return $fileRuleResults->getRuleResultCollection()->getViolations();
+        }
+
+        return $fileRuleResults->getRuleResultCollection()->getRuleResults();
     }
 
     /** @param Score[] $scores */
-    private function createScoresTable(array $scores): array
+    private function createScoresTable(array $scores): Table
     {
-        $headers = ['Score type', 'Points'];
-        $rows = [];
+        $table = Table::create(['Score type', 'Points']);
         foreach ($scores as $score) {
-            $rows[] = [
+            $table->addRow([
                 $score->getScoreType(),
-                $score->getPoints()
-            ];
+                (string)$score->getPoints(),
+            ]);
         }
 
-        return [$headers, $rows];
+        return $table;
     }
 
     private function getStateByRuleResult(RuleResult $ruleResult): string

@@ -2,6 +2,7 @@
 
 namespace App\Command\CheckDirectory\Output;
 
+use App\Model\ScoresResult;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 interface Output
@@ -12,5 +13,6 @@ interface Output
 
     public function noViolations(): self;
 
-    public function fileRuleResultsAndScores(array $fileRuleResultsAndScores, bool $showOnlyViolations): self;
+    /** @param ScoresResult[] $scoresResults */
+    public function scoresResults(array $scoresResults, bool $showOnlyViolations): self;
 }

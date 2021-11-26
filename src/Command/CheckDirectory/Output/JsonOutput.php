@@ -3,7 +3,6 @@
 namespace App\Command\CheckDirectory\Output;
 
 use App\Model\Score;
-use App\Rule\FileRuleResults;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class JsonOutput implements Output
@@ -31,26 +30,25 @@ class JsonOutput implements Output
         return $this;
     }
 
-    public function fileRuleResultsAndScores(array $fileRuleResultsAndScores, bool $showOnlyViolations): self
+    /** @inheritDoc */
+    public function scoresResults(array $scoresResults, bool $showOnlyViolations): self
     {
         $fileRuleResultsData = [];
-        foreach ($fileRuleResultsAndScores as $entry) {
-            /** @var FileRuleResults $fileRuleResults */
-            $fileRuleResults = $entry['file_rule_results'];
-            $scores = $entry['scores'];
+        foreach ($scoresResults as $scoresResult) {
+            $fileRuleResults = $scoresResult->getFileRuleResults();
 
             $fileRuleResultsData[] = [
                 'file_rule_results' => $fileRuleResults->jsonSerialize(),
                 'scores' => array_map(
                     fn(Score $score): array => $score->jsonSerialize(),
-                    $scores
+                    $scoresResult->getScores()
                 ),
             ];
         }
 
         $violationsExist = false;
-        foreach ($fileRuleResultsAndScores as $entry) {
-            $fileRuleResults = $entry['file_rule_results'];
+        foreach ($scoresResults as $scoresResult) {
+            $fileRuleResults = $scoresResult->getFileRuleResults();
             if (!empty($fileRuleResults->getRuleResultCollection()->getViolations())) {
                 $violationsExist = true;
                 break;
@@ -58,8 +56,8 @@ class JsonOutput implements Output
         }
 
         $compliancesExist = false;
-        foreach ($fileRuleResultsAndScores as $entry) {
-            $fileRuleResults = $entry['file_rule_results'];
+        foreach ($scoresResults as $scoresResult) {
+            $fileRuleResults = $scoresResult->getFileRuleResults();
             if (!empty($fileRuleResults->getRuleResultCollection()->getCompliances())) {
                 $compliancesExist = true;
                 break;
