@@ -6,6 +6,7 @@ use App\Command\CheckDirectory\Output\OutputHolder;
 use App\Rule\FileRuleResults;
 use App\Service\CleanCodeCheckerService;
 use App\Service\CleanCodeScorerService;
+use App\ServiceFactory\StopwatchFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -59,6 +60,9 @@ class CheckDirectoryCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $stopwatch = StopwatchFactory::create();
+        $stopwatch->start('check-directory');
+
         $directory = $this->extractDirectoryArgument($input);
         $outputFormat = $this->extractOutputFormatArgument($input);
         $showOnlyViolations = $this->extractShowOnlyViolationsOption($input);
@@ -81,6 +85,8 @@ class CheckDirectoryCommand extends Command
         }
 
         $commandOutput->scoresResults($scoresResults, $showOnlyViolations);
+
+        $commandOutput->stopTime($stopwatch->stop('check-directory'));
 
         return Command::FAILURE;
     }

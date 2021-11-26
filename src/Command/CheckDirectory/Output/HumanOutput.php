@@ -9,6 +9,7 @@ use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\RuleResult;
 use App\Rule\RuleResult\Violation;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Stopwatch\StopwatchEvent;
 
 class HumanOutput implements Output
 {
@@ -108,5 +109,12 @@ class HumanOutput implements Output
             $ruleResult instanceof Violation => '<error>Violation</error>',
             default => '<comment>WARNING</comment>'
         };
+    }
+
+    public function stopTime(StopwatchEvent $stopwatchEvent): self
+    {
+        $this->symfonyStyle->writeln($stopwatchEvent->__toString());
+
+        return $this;
     }
 }

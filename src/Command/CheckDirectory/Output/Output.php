@@ -4,6 +4,7 @@ namespace App\Command\CheckDirectory\Output;
 
 use App\Model\ScoresResult;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Stopwatch\StopwatchEvent;
 
 interface Output
 {
@@ -15,4 +16,6 @@ interface Output
 
     /** @param ScoresResult[] $scoresResults */
     public function scoresResults(array $scoresResults, bool $showOnlyViolations): self;
+
+    public function stopTime(StopwatchEvent $stopwatchEvent): self;
 }

@@ -4,6 +4,7 @@ namespace App\Command\CheckDirectory\Output;
 
 use App\Model\Score;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Stopwatch\StopwatchEvent;
 
 class JsonOutput implements Output
 {
@@ -70,6 +71,11 @@ class JsonOutput implements Output
             'rule_results' => $fileRuleResultsData,
         ]));
 
+        return $this;
+    }
+
+    public function stopTime(StopwatchEvent $stopwatchEvent): self
+    {
         return $this;
     }
 }
