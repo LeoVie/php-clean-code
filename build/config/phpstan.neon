@@ -5,8 +5,6 @@ parameters:
     paths:
         - %currentWorkingDirectory%/src
         - %currentWorkingDirectory%/tests/Unit
-    excludePaths:
-        - %currentWorkingDirectory%/template/generated/*
     ignoreErrors:
         - '#Method App\\Tests.+ has parameter .+ with no value type specified in iterable type .+#'
         - '#Method App\\Tests.+ return type has no value type specified in iterable type .+#'
