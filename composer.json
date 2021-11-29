@@ -7,6 +7,7 @@
         "php": ">=8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "leovie/php-clean-code-bundle": "dev-main",
         "leovie/php-filesystem": "dev-main",
         "leovie/php-token-normalize": "dev-main",
         "nikic/php-parser": "^4.13",
@@ -83,6 +84,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/LeoVie/php-token-normalize.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/LeoVie/php-clean-code-bundle.git"
         }
     ],
     "require-dev": {

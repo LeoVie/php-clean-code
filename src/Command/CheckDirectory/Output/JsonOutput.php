@@ -2,7 +2,7 @@
 
 namespace App\Command\CheckDirectory\Output;
 
-use App\Model\Score;
+use LeoVie\PhpCleanCode\Model\Score;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Stopwatch\StopwatchEvent;
 

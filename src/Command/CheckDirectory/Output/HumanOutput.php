@@ -3,12 +3,11 @@
 namespace App\Command\CheckDirectory\Output;
 
 use App\Command\CheckDirectory\Output\Helper\Model\Table;
-use App\Model\Score;
-use App\Rule\FileRuleResults;
-use App\Rule\RuleResult\Compliance;
-use App\Rule\RuleResult\RuleResult;
-use App\Rule\RuleResult\Violation;
-use Symfony\Component\Console\Helper\ProgressBar;
+use LeoVie\PhpCleanCode\Model\Score;
+use LeoVie\PhpCleanCode\Rule\FileRuleResults;
+use LeoVie\PhpCleanCode\Rule\RuleResult\Compliance;
+use LeoVie\PhpCleanCode\Rule\RuleResult\RuleResult;
+use LeoVie\PhpCleanCode\Rule\RuleResult\Violation;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Stopwatch\StopwatchEvent;
 

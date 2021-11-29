@@ -25,26 +25,7 @@ services:
   # please note that last definitions always *replace* previous ones
 
   _instanceof:
-    App\Rule\RuleConcept\Rule:
-      tags: [ 'app.rule' ]
     App\Command\CheckDirectory\Output\Output:
       tags: [ 'app.check_directory.output' ]
-    App\Scorer\Scorer:
-      tags: [ 'app.scorer' ]
-  App\Rule\RuleCollection:
-    arguments: [ !tagged_iterator { tag: 'app.rule' } ]
   App\Command\CheckDirectory\Output\OutputHolder:
     arguments: [ !tagged_iterator { tag: 'app.check_directory.output' } ]
-  App\Scorer\ScorerHolder:
-    arguments: [ !tagged_iterator { tag: 'app.scorer' } ]
-
-  PhpParser\ParserFactory: ~
-  PhpParser\NodeTraverser: ~
-  PhpParser\Lexer:
-    arguments:
-      $options:
-        usedAttributes:
-          - startLine
-          - endLine
-          - startFilePos
-          - endFilePos
