@@ -6,20 +6,27 @@ use App\Parse\NodeVisitor\NodeVisitorCollection;
 use App\Wrapper\LineAndColumnLexerWrapper;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use PhpParser\Parser;
 use PhpParser\ParserFactory;
 
 class ParseAndTraverser
 {
+    private Parser $parser;
+
     /** @var array<string, NodeVisitorCollection> */
     private array $parseCache = [];
 
     public function __construct(
-        private LineAndColumnLexerWrapper $lineAndColumnLexerWrapper,
-        private ParserFactory             $parserFactory,
-        private NodeTraverser             $nodeTraverser,
-        private NodeVisitorCollection     $nodeVisitorCollection,
+        private NodeTraverser         $nodeTraverser,
+        private NodeVisitorCollection $nodeVisitorCollection,
+        LineAndColumnLexerWrapper     $lineAndColumnLexerWrapper,
+        ParserFactory                 $parserFactory,
     )
     {
+        $this->parser = $parserFactory->create(
+            ParserFactory::PREFER_PHP7,
+            $lineAndColumnLexerWrapper->getLexer()
+        );
     }
 
     public function parseAndTraverse(string $fileCode): NodeVisitorCollection
@@ -28,14 +35,8 @@ class ParseAndTraverser
             return $this->parseCache[$fileCode];
         }
 
-        // TODO: Move to constructor
-        $parser = $this->parserFactory->create(
-            ParserFactory::PREFER_PHP7,
-            $this->lineAndColumnLexerWrapper->getLexer()
-        );
-
         /** @var Node[] $ast */
-        $ast = $parser->parse($fileCode);
+        $ast = $this->parser->parse($fileCode);
 
         $this->nodeVisitorCollection->resetAll();
 
