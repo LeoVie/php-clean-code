@@ -10,8 +10,8 @@ use App\Rule\RuleResult\Violation;
 class CCF01VerticalSizeLimit implements RuleLinesAware
 {
     private const NAME = 'CC-F-01 Vertical Size Limit';
-    private const VIOLATION_MESSAGE_PATTERN = 'File has %d lines more than allowed.';
-    private const COMPLIANCE_MESSAGE_PATTERN = 'File has %d lines.';
+    private const VIOLATION_PATTERN = 'File has %d lines more than allowed.';
+    private const COMPLIANCE_PATTERN = 'File has %d lines.';
     private const CRITICALITY_FACTOR = 50;
     private const MAX_VERTICAL_SIZE = 500;
 
@@ -58,11 +58,11 @@ class CCF01VerticalSizeLimit implements RuleLinesAware
 
     private function buildViolationMessage(int $linesCount): string
     {
-        return \Safe\sprintf(self::VIOLATION_MESSAGE_PATTERN, $linesCount - $this->getMaxVerticalSize());
+        return \Safe\sprintf(self::VIOLATION_PATTERN, $linesCount - $this->getMaxVerticalSize());
     }
 
     private function buildComplianceMessage(int $linesCount): string
     {
-        return \Safe\sprintf(self::COMPLIANCE_MESSAGE_PATTERN, $linesCount);
+        return \Safe\sprintf(self::COMPLIANCE_PATTERN, $linesCount);
     }
 }

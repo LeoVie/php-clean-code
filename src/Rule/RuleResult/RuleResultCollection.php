@@ -37,7 +37,7 @@ class RuleResultCollection implements \JsonSerializable
         return array_values(
             array_filter(
                 $ruleResults,
-                fn(RuleResult $rr): bool => $rr instanceof Violation
+                fn(RuleResult $ruleResult): bool => $ruleResult instanceof Violation
             )
         );
     }
@@ -52,7 +52,7 @@ class RuleResultCollection implements \JsonSerializable
         return array_values(
             array_filter(
                 $ruleResults,
-                fn(RuleResult $rr): bool => $rr instanceof Compliance
+                fn(RuleResult $ruleResult): bool => $ruleResult instanceof Compliance
             )
         );
     }
@@ -79,11 +79,11 @@ class RuleResultCollection implements \JsonSerializable
     {
         return [
             'violations' => array_map(
-                fn(RuleResult $rr): array => $rr->jsonSerialize(),
+                fn(RuleResult $ruleResult): array => $ruleResult->jsonSerialize(),
                 $this->sortRuleResultsByRuleName($this->violations)
             ),
             'compliances' => array_map(
-                fn(RuleResult $rr): array => $rr->jsonSerialize(),
+                fn(RuleResult $ruleResult): array => $ruleResult->jsonSerialize(),
                 $this->sortRuleResultsByRuleName($this->compliances)
             ),
         ];

@@ -10,9 +10,9 @@ use PhpParser\Node\Stmt\Class_;
 class CCN08MeaningfulClassnames implements RuleClassNodeAware
 {
     private const NAME = 'CC-N-08 Meaningful Classnames';
-    private const VIOLATION_MESSAGE_PATTERN = 'Classname "%s" matches forbidden pattern "%s".';
+    private const VIOLATION_PATTERN = 'Classname "%s" matches forbidden pattern "%s".';
     private const ANONYMOUS_CLASS_PATTERN = 'Class is anonymous and therefore not forbidden.';
-    private const COMPLIANCE_MESSAGE_PATTERN = 'Classname "%s" is not forbidden.';
+    private const COMPLIANCE_PATTERN = 'Classname "%s" is not forbidden.';
     private const FORBIDDEN_CLASSNAME_PATTERNS = [
         '@.*Manager$@',
         '@.*Processor$@',
@@ -39,7 +39,7 @@ class CCN08MeaningfulClassnames implements RuleClassNodeAware
         $forbiddenNamePart = $this->getForbiddenNamePart($name->name);
         if ($forbiddenNamePart !== null) {
             $message = \Safe\sprintf(
-                self::VIOLATION_MESSAGE_PATTERN,
+                self::VIOLATION_PATTERN,
                 $name,
                 $forbiddenNamePart
             );
@@ -48,7 +48,7 @@ class CCN08MeaningfulClassnames implements RuleClassNodeAware
             return [Violation::create($this, $message, $criticality)];
         }
 
-        $message = \Safe\sprintf(self::COMPLIANCE_MESSAGE_PATTERN, $name);
+        $message = \Safe\sprintf(self::COMPLIANCE_PATTERN, $name);
 
         return [Compliance::create($this, $message)];
     }

@@ -105,7 +105,10 @@ class CleanCodeCheckerService
     public function checkClassNodeAwareRules(string $fileCode): array
     {
         $ruleResults = [];
-        $classNodes = $this->parseAndTraverser->parseAndTraverse($fileCode)->getExtractClassesNodeVisitor()->getClassNodes();
+        $classNodes = $this->parseAndTraverser
+            ->parseAndTraverse($fileCode)
+            ->getExtractClassesNodeVisitor()
+            ->getClassNodes();
         foreach ($classNodes as $classNode) {
             foreach ($this->ruleCollection->getClassNodeAwareRules() as $rule) {
                 $ruleResults = array_merge(
@@ -122,7 +125,10 @@ class CleanCodeCheckerService
     public function checkNameNodeAwareRules(string $fileCode): array
     {
         $ruleResults = [];
-        $nameNodes = $this->parseAndTraverser->parseAndTraverse($fileCode)->getExtractNamesNodeVisitor()->getNameNodes();
+        $nameNodes = $this->parseAndTraverser
+            ->parseAndTraverse($fileCode)
+            ->getExtractNamesNodeVisitor()
+            ->getNameNodes();
         foreach ($nameNodes as $nameNode) {
             foreach ($this->ruleCollection->getNameNodeAwareRules() as $rule) {
                 $ruleResults = array_merge(

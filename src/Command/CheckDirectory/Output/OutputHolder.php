@@ -10,9 +10,14 @@ class OutputHolder
 {
     /** @param iterable<Output> $outputs */
     public function __construct(private iterable $outputs, private SymfonyStyleFactory $symfonyStyleFactory)
-    {}
+    {
+    }
 
-    public function getOutputByFormatAndSymfonyIO(string $format, InputInterface $symfonyInput, OutputInterface $symfonyOutput): Output
+    public function getOutputByFormatAndSymfonyIO(
+        string          $format,
+        InputInterface  $symfonyInput,
+        OutputInterface $symfonyOutput
+    ): Output
     {
         foreach ($this->outputs as $output) {
             if ($output->getFormat() === $format) {

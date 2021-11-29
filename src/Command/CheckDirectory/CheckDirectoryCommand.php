@@ -143,7 +143,9 @@ class CheckDirectoryCommand extends Command
     {
         return array_filter(
             $fileRuleResultsArray,
-            fn(FileRuleResults $fileRuleResults): bool => !empty($fileRuleResults->getRuleResultCollection()->getViolations())
+            fn(FileRuleResults $fileRuleResults): bool => !empty(
+                $fileRuleResults->getRuleResultCollection()->getViolations()
+            )
         );
     }
 }

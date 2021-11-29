@@ -11,8 +11,8 @@ use App\Rule\RuleResult\Violation;
 class CCF04HorizontalSizeLimit implements RuleLinesAware
 {
     private const NAME = 'CC-F-04 Horizontal Size Limit';
-    private const VIOLATION_MESSAGE_PATTERN = 'Line %d has %d characters more than allowed.';
-    private const COMPLIANCE_MESSAGE_PATTERN = 'No too long lines exist in code.';
+    private const VIOLATION_PATTERN = 'Line %d has %d characters more than allowed.';
+    private const COMPLIANCE_PATTERN = 'No too long lines exist in code.';
     private const CRITICALITY_FACTOR = 50;
     private const MAX_HORIZONTAL_SIZE = 120;
 
@@ -40,7 +40,7 @@ class CCF04HorizontalSizeLimit implements RuleLinesAware
         $tooLongLines = $this->extractTooLongLines($lines);
 
         if (empty($tooLongLines)) {
-            $message = self::COMPLIANCE_MESSAGE_PATTERN;
+            $message = self::COMPLIANCE_PATTERN;
 
             return [Compliance::create($this, $message)];
         }
@@ -86,7 +86,7 @@ class CCF04HorizontalSizeLimit implements RuleLinesAware
     private function buildViolationMessage(Line $line): string
     {
         return \Safe\sprintf(
-            self::VIOLATION_MESSAGE_PATTERN,
+            self::VIOLATION_PATTERN,
             $line->getLineNumber(),
             $line->length() - $this->getMaxHorizontalSize(),
         );

@@ -12,8 +12,8 @@ use PhpParser\Node\Stmt\Property;
 class CCF03InstanceVariablesGrouped implements RuleClassNodeAware
 {
     private const NAME = 'CC-F-03 Instance Variables Grouped';
-    private const VIOLATION_MESSAGE_PATTERN = 'Class "%s" has ungrouped instance variables (%d groups).';
-    private const COMPLIANCE_MESSAGE_PATTERN = 'Class "%s" has no ungrouped instance variables.';
+    private const VIOLATION_PATTERN = 'Class "%s" has ungrouped instance variables (%d groups).';
+    private const COMPLIANCE_PATTERN = 'Class "%s" has no ungrouped instance variables.';
     private const CRITICALITY_FACTOR = 100;
     private const MAX_COUNT_OF_INSTANCE_VARIABLE_GROUPS = 1;
 
@@ -79,11 +79,11 @@ class CCF03InstanceVariablesGrouped implements RuleClassNodeAware
 
     private function buildViolationMessage(Class_ $class, int $countOfInstanceVariableGroups): string
     {
-        return \Safe\sprintf(self::VIOLATION_MESSAGE_PATTERN, $class->name, $countOfInstanceVariableGroups);
+        return \Safe\sprintf(self::VIOLATION_PATTERN, $class->name, $countOfInstanceVariableGroups);
     }
 
     private function buildComplianceMessage(Class_ $class): string
     {
-        return \Safe\sprintf(self::COMPLIANCE_MESSAGE_PATTERN, $class->name);
+        return \Safe\sprintf(self::COMPLIANCE_PATTERN, $class->name);
     }
 }

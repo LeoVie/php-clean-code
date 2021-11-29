@@ -80,7 +80,10 @@ class HumanOutput implements Output
     }
 
     /** @return RuleResult[] */
-    private function extractRuleResultsFromFileRuleResults(FileRuleResults $fileRuleResults, bool $onlyViolations): array
+    private function extractRuleResultsFromFileRuleResults(
+        FileRuleResults $fileRuleResults,
+        bool            $onlyViolations
+    ): array
     {
         if ($onlyViolations) {
             return $fileRuleResults->getRuleResultCollection()->getViolations();

@@ -28,7 +28,11 @@ class ParseAndTraverser
             return $this->parseCache[$fileCode];
         }
 
-        $parser = $this->parserFactory->create(ParserFactory::PREFER_PHP7, $this->lineAndColumnLexerWrapper->getLexer());
+        // TODO: Move to constructor
+        $parser = $this->parserFactory->create(
+            ParserFactory::PREFER_PHP7,
+            $this->lineAndColumnLexerWrapper->getLexer()
+        );
 
         /** @var Node[] $ast */
         $ast = $parser->parse($fileCode);

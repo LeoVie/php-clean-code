@@ -12,9 +12,9 @@ use PhpParser\Node\Identifier;
 class CCN04PronounceableNames implements RuleNameNodeAware
 {
     private const NAME = 'CC-N-04 Pronounceable Names';
-    private const VIOLATION_MESSAGE_PATTERN = 'Name "%s" in line %d seems to be unpronounceable.';
-    private const COMPLIANCE_MESSAGE_PATTERN = 'Name "%s" in line %d seems to be pronounceable.';
-    private const NODE_IS_EXPRESSION_MESSAGE_PATTERN = 'Name is an expression and therefore pronounceable by definition.';
+    private const VIOLATION_PATTERN = 'Name "%s" in line %d seems to be unpronounceable.';
+    private const COMPLIANCE_PATTERN = 'Name "%s" in line %d seems to be pronounceable.';
+    private const NODE_IS_EXPRESSION_PATTERN = 'Name is an expression and therefore pronounceable by definition.';
     private const CRITICALITY_FACTOR = 50;
 
     public function getName(): string
@@ -31,17 +31,17 @@ class CCN04PronounceableNames implements RuleNameNodeAware
     {
         $name = $node->name;
         if ($name instanceof Expr) {
-            return [Compliance::create($this, self::NODE_IS_EXPRESSION_MESSAGE_PATTERN)];
+            return [Compliance::create($this, self::NODE_IS_EXPRESSION_PATTERN)];
         }
 
         if ($this->stringSeemsUnpronounceable($name)) {
-            $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $name, $node);
+            $message = $this->buildMessage(self::VIOLATION_PATTERN, $name, $node);
             $criticality = $this->getCriticalityFactor();
 
             return [Violation::create($this, $message, $criticality)];
         }
 
-        $message = $this->buildMessage(self::COMPLIANCE_MESSAGE_PATTERN, $name, $node);
+        $message = $this->buildMessage(self::COMPLIANCE_PATTERN, $name, $node);
         return [Compliance::create($this, $message)];
     }
 

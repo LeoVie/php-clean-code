@@ -12,8 +12,10 @@ use LeoVie\PhpTokenNormalize\Model\TokenSequence;
 class CCK01SpareComments implements RuleTokenSequenceAware
 {
     private const NAME = 'CC-K-01 Spare comments';
-    private const VIOLATION_MESSAGE_PATTERN = 'File has a too high amount of comment tokens (%f, that\' s %f percent points higher than allowed).';
-    private const COMPLIANCE_MESSAGE_PATTERN = 'File has an allowed amount of comment tokens (%f, that\'s %f percent points lower than allowed maximum).';
+    private const VIOLATION_PATTERN
+        = 'File has a too high amount of comment tokens (%f, that\' s %f percent points higher than allowed).';
+    private const COMPLIANCE_PATTERN
+        = 'File has an allowed amount of comment tokens (%f, that\'s %f percent points lower than allowed maximum).';
     private const MAX_AMOUNT_OF_COMMENT_TOKENS_IN_PERCENT = 5;
     private const CRITICALITY_FACTOR = 50;
 
@@ -52,12 +54,12 @@ class CCK01SpareComments implements RuleTokenSequenceAware
                 $this->getCriticalityFactor()
             );
 
-            $message = $this->buildMessage(self::VIOLATION_MESSAGE_PATTERN, $amountOfComments);
+            $message = $this->buildMessage(self::VIOLATION_PATTERN, $amountOfComments);
 
             return [Violation::create($this, $message, $criticality)];
         }
 
-        $message = $this->buildMessage(self::COMPLIANCE_MESSAGE_PATTERN, $amountOfComments);
+        $message = $this->buildMessage(self::COMPLIANCE_PATTERN, $amountOfComments);
 
         return [Compliance::create($this, $message)];
     }
