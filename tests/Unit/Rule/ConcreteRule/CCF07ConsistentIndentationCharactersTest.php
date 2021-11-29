@@ -23,9 +23,13 @@ class CCF07ConsistentIndentationCharactersTest extends TestCase
     public function complianceProvider(): array
     {
         return [
-            [
+            'properly indented' => [
                 'lines' => ['    properly indented'],
-                'message' => 'Code is properly indented (all lines use "    " (ascii 32, 32, 32, 32) for indentation).'
+                'message' => 'Code is properly indented (all lines use "    " (ascii 32 (4 times)) for indentation).',
+            ],
+            'in block comment' => [
+                'lines' => ['     * five spaces for indentation are okay here'],
+                'message' => 'Code is properly indented (all lines use "    " (ascii 32 (4 times)) for indentation).',
             ],
         ];
     }
@@ -54,12 +58,12 @@ class CCF07ConsistentIndentationCharactersTest extends TestCase
                     '  not enough spaces',
                     '     too many spaces',
                     'not indented',
-                    '	tab'
+                    '	tab',
                 ],
                 'messages' => [
-                    'Line 1 uses "  " (ascii 32, 32) for indentation, but should use "    " (ascii 32, 32, 32, 32).',
-                    'Line 2 uses "     " (ascii 32, 32, 32, 32, 32) for indentation, but should use "    " (ascii 32, 32, 32, 32).',
-                    'Line 4 uses "	" (ascii 9) for indentation, but should use "    " (ascii 32, 32, 32, 32).'
+                    'Line 1 uses "  " (ascii 32 (2 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
+                    'Line 2 uses "     " (ascii 32 (5 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
+                    'Line 4 uses "	" (ascii 9 (1 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
                 ],
             ],
         ];

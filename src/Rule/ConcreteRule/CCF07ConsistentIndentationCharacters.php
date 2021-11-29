@@ -2,7 +2,6 @@
 
 namespace App\Rule\ConcreteRule;
 
-use App\Rule\RuleConcept\RuleFileCodeAware;
 use App\Rule\RuleConcept\RuleLinesAware;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\Violation;
@@ -32,8 +31,11 @@ class CCF07ConsistentIndentationCharacters implements RuleLinesAware
 
         $violations = [];
         foreach ($lines as $i => $line) {
-            $ltrimmedLine = $this->ltrimIndentationCharacters($line);
+            if ($this->isBlockCommentLine($line)) {
+                continue;
+            }
 
+            $ltrimmedLine = $this->ltrimIndentationCharacters($line);
             $startsWithWhitespaceCharacter = $this->startsWithWhitespaceCharacter($ltrimmedLine);
 
             if (!$startsWithWhitespaceCharacter) {
@@ -71,9 +73,47 @@ class CCF07ConsistentIndentationCharacters implements RuleLinesAware
         return [Compliance::create($this, $message)];
     }
 
+    private function isBlockCommentLine(string $line): bool
+    {
+        $ltrimmedLine = ltrim($line);
+
+        if ($ltrimmedLine === '') {
+            return false;
+        }
+
+        return $ltrimmedLine[0] === '*';
+    }
+
     private function stringToAsciiList(string $string): string
     {
-        return join(', ', array_map(fn(string $char): int => ord($char), str_split($string)));
+        $asciiCharacters = array_map(fn(string $char): int => ord($char), str_split($string));
+
+        $characterCounts = [
+            [
+                'char' => $asciiCharacters[0],
+                'n' => 1,
+            ],
+        ];
+        $i = 0;
+        foreach (array_slice($asciiCharacters, 1) as $asciiCharacter) {
+            $currentChar = $characterCounts[$i]['char'];
+
+            $characterCounts[$i] = [
+                'char' => $currentChar,
+                'n' => $characterCounts[$i]['n'] + 1,
+            ];
+
+            if ($asciiCharacter !== $currentChar) {
+                $i++;
+            }
+        }
+
+        $list = array_map(
+            fn(array $characterCount): string => \Safe\sprintf('%s (%d times)', $characterCount['char'], $characterCount['n']),
+            $characterCounts
+        );
+
+        return join(', ', $list);
     }
 
     private function ltrimIndentationCharacters(string $subject): string
