@@ -55,15 +55,16 @@ class CCF07ConsistentIndentationCharactersTest extends TestCase
         return [
             [
                 'lines' => [
+                    '     * five spaces for indentation are okay here',
                     '  not enough spaces',
                     '     too many spaces',
                     'not indented',
                     '	tab',
                 ],
                 'messages' => [
-                    'Line 1 uses "  " (ascii 32 (2 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
-                    'Line 2 uses "     " (ascii 32 (5 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
-                    'Line 4 uses "	" (ascii 9 (1 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
+                    'Line 2 uses "  " (ascii 32 (2 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
+                    'Line 3 uses "     " (ascii 32 (5 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
+                    'Line 5 uses "	" (ascii 9 (1 times)) for indentation, but should use "    " (ascii 32 (4 times)).',
                 ],
             ],
         ];
