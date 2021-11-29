@@ -44,10 +44,7 @@ class CCF04HorizontalSizeLimitTest extends TestCase
             $expected[] = Violation::create($rule, $message, 10.0);
         }
 
-        self::assertEquals(
-            $expected,
-            $rule->check($lines)
-        );
+        self::assertEquals($expected, $rule->check($lines));
     }
 
     public function violationProvider(): array

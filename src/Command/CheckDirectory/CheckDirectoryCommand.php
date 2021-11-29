@@ -2,7 +2,10 @@
 
 namespace App\Command\CheckDirectory;
 
+use App\Command\CheckDirectory\Output\HumanOutput;
+use App\Command\CheckDirectory\Output\JsonOutput;
 use App\Command\CheckDirectory\Output\OutputHolder;
+use App\Find\PhpFileFinder;
 use App\Rule\FileRuleResults;
 use App\Service\CleanCodeCheckerService;
 use App\Service\CleanCodeScorerService;
@@ -20,15 +23,16 @@ class CheckDirectoryCommand extends Command
     private const OPTION_SHOW_ONLY_VIOLATIONS_LONG = 'show_only_violations';
     private const OPTION_SHOW_ONLY_VIOLATIONS_SHORT = 'o';
     private const SUPPORTED_OUTPUT_FORMATS = [
-        'human',
-        'json',
+        HumanOutput::FORMAT,
+        JsonOutput::FORMAT,
     ];
     protected static $defaultName = 'app:check-directory';
 
     public function __construct(
         private CleanCodeCheckerService $cleanCodeCheckerService,
         private CleanCodeScorerService  $cleanCodeScorerService,
-        private OutputHolder            $outputHolder
+        private OutputHolder            $outputHolder,
+        private PhpFileFinder           $phpFileFinder,
     )
     {
         parent::__construct(self::$defaultName);
@@ -69,7 +73,18 @@ class CheckDirectoryCommand extends Command
 
         $commandOutput = $this->outputHolder->getOutputByFormatAndSymfonyIO($outputFormat, $input, $output);
 
-        $fileRuleResultsArray = $this->cleanCodeCheckerService->checkDirectory($directory);
+        $phpFiles = $this->phpFileFinder->findPhpFilesInPath($directory);
+
+        $commandOutput->initFilesProgressBar(count($phpFiles));
+
+        $fileRuleResultsArray = array_map(
+            function (string $phpFile) use ($commandOutput): FileRuleResults {
+                $commandOutput->increaseFilesProgressBar();
+
+                return $this->cleanCodeCheckerService->checkFile($phpFile);
+            },
+            $phpFiles
+        );
 
         $fileRuleResultsWithViolationsArray = $this->filterOutResultsWithNoViolations($fileRuleResultsArray);
 

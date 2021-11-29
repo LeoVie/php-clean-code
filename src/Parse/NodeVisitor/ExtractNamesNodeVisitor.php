@@ -1,6 +1,6 @@
 <?php
 
-namespace App\NodeVisitor;
+namespace App\Parse\NodeVisitor;
 
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;

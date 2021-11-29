@@ -18,4 +18,8 @@ interface Output
     public function scoresResults(array $scoresResults, bool $showOnlyViolations): self;
 
     public function stopTime(StopwatchEvent $stopwatchEvent): self;
+
+    public function initFilesProgressBar(int $countOfFiles): self;
+
+    public function increaseFilesProgressBar(): self;
 }

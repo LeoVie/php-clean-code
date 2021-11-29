@@ -8,7 +8,7 @@ use Symfony\Component\Stopwatch\StopwatchEvent;
 
 class JsonOutput implements Output
 {
-    private const FORMAT = 'json';
+    public const FORMAT = 'json';
 
     private SymfonyStyle $symfonyStyle;
 
@@ -75,6 +75,16 @@ class JsonOutput implements Output
     }
 
     public function stopTime(StopwatchEvent $stopwatchEvent): self
+    {
+        return $this;
+    }
+
+    public function initFilesProgressBar(int $countOfFiles): self
+    {
+        return $this;
+    }
+
+    public function increaseFilesProgressBar(): self
     {
         return $this;
     }

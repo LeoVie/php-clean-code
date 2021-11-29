@@ -8,12 +8,13 @@ use App\Rule\FileRuleResults;
 use App\Rule\RuleResult\Compliance;
 use App\Rule\RuleResult\RuleResult;
 use App\Rule\RuleResult\Violation;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Stopwatch\StopwatchEvent;
 
 class HumanOutput implements Output
 {
-    private const FORMAT = 'human';
+    public const FORMAT = 'human';
 
     private SymfonyStyle $symfonyStyle;
 
@@ -114,6 +115,20 @@ class HumanOutput implements Output
     public function stopTime(StopwatchEvent $stopwatchEvent): self
     {
         $this->symfonyStyle->writeln($stopwatchEvent->__toString());
+
+        return $this;
+    }
+
+    public function initFilesProgressBar(int $countOfFiles): self
+    {
+        $this->symfonyStyle->progressStart($countOfFiles);
+
+        return $this;
+    }
+
+    public function increaseFilesProgressBar(): self
+    {
+        $this->symfonyStyle->progressAdvance();
 
         return $this;
     }
