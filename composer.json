@@ -9,6 +9,7 @@
         "ext-iconv": "*",
         "leovie/php-clean-code-bundle": "dev-main",
         "leovie/php-filesystem": "dev-main",
+        "leovie/php-html-builder": "dev-main",
         "leovie/php-token-normalize": "dev-main",
         "nikic/php-parser": "^4.13",
         "symfony/console": "5.3.*",
@@ -88,6 +89,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/LeoVie/php-clean-code-bundle.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/LeoVie/php-html-builder.git"
         }
     ],
     "require-dev": {

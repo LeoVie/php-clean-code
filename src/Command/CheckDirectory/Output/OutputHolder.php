@@ -8,9 +8,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class OutputHolder
 {
-    /** @param iterable<Output> $outputs */
+    /** @param \Traversable<int, Output> $outputs */
     public function __construct(private iterable $outputs, private SymfonyStyleFactory $symfonyStyleFactory)
     {
+    }
+
+    /** @return Output[] */
+    public function getAll(): array
+    {
+        return iterator_to_array($this->outputs);
     }
 
     public function getOutputByFormatAndSymfonyIO(

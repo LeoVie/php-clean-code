@@ -4,6 +4,7 @@ namespace App\Command\CheckDirectory;
 
 use App\Command\CheckDirectory\Output\HumanOutput;
 use App\Command\CheckDirectory\Output\JsonOutput;
+use App\Command\CheckDirectory\Output\Output;
 use App\Command\CheckDirectory\Output\OutputHolder;
 use App\Find\PhpFileFinder;
 use LeoVie\PhpCleanCode\Rule\FileRuleResults;
@@ -22,11 +23,7 @@ class CheckDirectoryCommand extends Command
     private const ARGUMENT_OUTPUT_FORMAT = 'output_format';
     private const OPTION_SHOW_ONLY_VIOLATIONS_LONG = 'show_only_violations';
     private const OPTION_SHOW_ONLY_VIOLATIONS_SHORT = 'o';
-    private const SUPPORTED_OUTPUT_FORMATS = [
-        HumanOutput::FORMAT,
-        JsonOutput::FORMAT,
-    ];
-    protected static $defaultName = 'app:check-directory';
+    protected static $defaultName = 'php-cca:check';
 
     public function __construct(
         private CleanCodeCheckerService $cleanCodeCheckerService,
@@ -49,8 +46,13 @@ class CheckDirectoryCommand extends Command
         $this->addArgument(
             self::ARGUMENT_OUTPUT_FORMAT,
             InputArgument::OPTIONAL,
-            \Safe\sprintf('Format of output (possible: %s)', join(', ', self::SUPPORTED_OUTPUT_FORMATS)),
-            'human'
+            \Safe\sprintf('Format of output (possible: %s)', join(', ',
+                array_map(
+                    fn(Output $o): string => $o->getFormat(),
+                    $this->outputHolder->getAll()
+                )
+            )),
+            HumanOutput::FORMAT
         );
 
         $this->addOption(
@@ -85,6 +87,8 @@ class CheckDirectoryCommand extends Command
             },
             $phpFiles
         );
+
+        $this->cleanCodeCheckerService->saveCache();
 
         $fileRuleResultsWithViolationsArray = $this->filterOutResultsWithNoViolations($fileRuleResultsArray);
 
