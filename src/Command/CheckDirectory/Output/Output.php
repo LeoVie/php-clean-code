@@ -19,7 +19,5 @@ interface Output
 
     public function stopTime(StopwatchEvent $stopwatchEvent): self;
 
-    public function initFilesProgressBar(int $countOfFiles): self;
-
-    public function increaseFilesProgressBar(): self;
+    public function createProgressIterator(iterable $iterable): iterable;
 }

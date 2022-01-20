@@ -121,17 +121,8 @@ class HumanOutput implements Output
         return $this;
     }
 
-    public function initFilesProgressBar(int $countOfFiles): self
+    public function createProgressIterator(iterable $iterable): iterable
     {
-        $this->symfonyStyle->progressStart($countOfFiles);
-
-        return $this;
-    }
-
-    public function increaseFilesProgressBar(): self
-    {
-        $this->symfonyStyle->progressAdvance();
-
-        return $this;
+        return $this->symfonyStyle->createProgressBar()->iterate($iterable);
     }
 }
