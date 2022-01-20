@@ -234,7 +234,7 @@ class HtmlOutput implements Output
                 $this->getStateByRuleResult($ruleResult),
                 $ruleResult->getRule()->getName(),
                 $ruleResult->getMessage(),
-                $ruleResult->getCriticality() . ' %',
+                $ruleResult->getCriticality() === null ? '' : $ruleResult->getCriticality() . ' %',
             ]);
         }
 
