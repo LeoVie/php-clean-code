@@ -8,7 +8,10 @@ class Table
     private array $rows = [];
 
     /** @param string[] $header */
-    private function __construct(private array $header)
+    private function __construct(
+        /** @psalm-readonly */
+        private array $header
+    )
     {
     }
 
