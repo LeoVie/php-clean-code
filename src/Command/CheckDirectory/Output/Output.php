@@ -19,5 +19,12 @@ interface Output
 
     public function stopTime(StopwatchEvent $stopwatchEvent): self;
 
+    /**
+     * @template T
+     *
+     * @param iterable<T> $iterable
+     *
+     * @return iterable<T>
+     */
     public function createProgressIterator(iterable $iterable): iterable;
 }
