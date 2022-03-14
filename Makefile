@@ -9,3 +9,12 @@ phpunit:
 
 test: phpstan
 	composer testall
+
+psalm:
+	composer psalm
+
+infection:
+	composer infection
+
+infection-after-phpunit:
+	composer infection-after-phpunit
