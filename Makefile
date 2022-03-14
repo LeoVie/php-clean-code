@@ -4,7 +4,7 @@ build_phpstan_image:
 phpstan:
 	docker run -v ${PWD}:/app --rm php-clean-code/phpstan:latest analyse -c /app/build/config/phpstan.neon
 
-phpunit:
+unit:
 	composer phpunit
 
 test: phpstan
