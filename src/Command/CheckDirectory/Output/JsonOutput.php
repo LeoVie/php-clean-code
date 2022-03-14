@@ -79,13 +79,8 @@ class JsonOutput implements Output
         return $this;
     }
 
-    public function initFilesProgressBar(int $countOfFiles): self
+    public function createProgressIterator(iterable $iterable): iterable
     {
-        return $this;
-    }
-
-    public function increaseFilesProgressBar(): self
-    {
-        return $this;
+        return $iterable;
     }
 }

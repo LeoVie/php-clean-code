@@ -20,10 +20,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CheckDirectoryCommand extends Command
 {
     private const ARGUMENT_DIRECTORY = 'directory';
-    private const ARGUMENT_OUTPUT_FORMAT = 'output_format';
+    private const OPTION_OUTPUT_FORMAT_LONG = 'output_format';
+    private const OPTION_OUTPUT_FORMAT_SHORT = 'f';
     private const OPTION_SHOW_ONLY_VIOLATIONS_LONG = 'show_only_violations';
     private const OPTION_SHOW_ONLY_VIOLATIONS_SHORT = 'o';
-    protected static $defaultName = 'php-cca:check';
+    protected static $defaultName = 'php-clean-code:check';
 
     public function __construct(
         private CleanCodeCheckerService $cleanCodeCheckerService,
@@ -43,8 +44,9 @@ class CheckDirectoryCommand extends Command
             'Absolute path of directory which should get checked'
         );
 
-        $this->addArgument(
-            self::ARGUMENT_OUTPUT_FORMAT,
+        $this->addOption(
+            self::OPTION_OUTPUT_FORMAT_LONG,
+            self::OPTION_OUTPUT_FORMAT_SHORT,
             InputArgument::OPTIONAL,
             \Safe\sprintf('Format of output (possible: %s)', join(', ',
                 array_map(
@@ -70,23 +72,17 @@ class CheckDirectoryCommand extends Command
         $stopwatch->start('check-directory');
 
         $directory = $this->extractDirectoryArgument($input);
-        $outputFormat = $this->extractOutputFormatArgument($input);
+        $outputFormat = $this->extractOutputFormatOption($input);
         $showOnlyViolations = $this->extractShowOnlyViolationsOption($input);
 
         $commandOutput = $this->outputHolder->getOutputByFormatAndSymfonyIO($outputFormat, $input, $output);
 
         $phpFiles = $this->phpFileFinder->findPhpFilesInPath($directory);
 
-        $commandOutput->initFilesProgressBar(count($phpFiles));
-
-        $fileRuleResultsArray = array_map(
-            function (string $phpFile) use ($commandOutput): FileRuleResults {
-                $commandOutput->increaseFilesProgressBar();
-
-                return $this->cleanCodeCheckerService->checkFile($phpFile);
-            },
-            $phpFiles
-        );
+        $fileRuleResultsArray = [];
+        foreach ($commandOutput->createProgressIterator($phpFiles) as $phpFile) {
+            $fileRuleResultsArray[] = $this->cleanCodeCheckerService->checkFile($phpFile);
+        }
 
         $this->cleanCodeCheckerService->saveCache();
 
@@ -118,10 +114,10 @@ class CheckDirectoryCommand extends Command
         return $directory;
     }
 
-    private function extractOutputFormatArgument(InputInterface $input): string
+    private function extractOutputFormatOption(InputInterface $input): string
     {
         /** @var string $outputFormat */
-        $outputFormat = $input->getArgument(self::ARGUMENT_OUTPUT_FORMAT);
+        $outputFormat = $input->getOption(self::OPTION_OUTPUT_FORMAT_LONG);
 
         return $outputFormat;
     }

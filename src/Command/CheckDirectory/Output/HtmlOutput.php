@@ -90,7 +90,7 @@ class HtmlOutput implements Output
                 ),
                 Tag::create('title',
                     [],
-                    [Content::create('Clean Code Analysis Report')]
+                    [Content::create('php-clean-code: Report')]
                 ),
             ]
         );
@@ -106,7 +106,7 @@ class HtmlOutput implements Output
                     [
                         Tag::create('h1',
                             [],
-                            [Content::create('Clean Code Analysis Report')]
+                            [Content::create('php-clean-code: Report')]
                         ),
                         Tag::create('p',
                             [],
@@ -144,13 +144,13 @@ class HtmlOutput implements Output
             $div = Tag::create('div',
                 [],
                 [
-                    Tag::create('h2',
+                    Tag::create('h4',
                         [],
                         [Content::create($fileRuleResults->getPath())]
                     ),
-                    Tag::create('h3',
+                    Tag::create('h5',
                         [],
-                        [Content::create('Clean Code Results')]
+                        [Content::create('Rule results')]
                     ),
                     Tag::create('table',
                         [Attribute::create('class', 'table')],
@@ -159,7 +159,7 @@ class HtmlOutput implements Output
                             $this->createTableBody($fileRuleResultsTable),
                         ]
                     ),
-                    Tag::create('h3',
+                    Tag::create('h5',
                         [],
                         [Content::create('Scores')]
                     ),
@@ -208,7 +208,7 @@ class HtmlOutput implements Output
                                 [
                                     Tag::create('h1',
                                         [],
-                                        [Content::create('Clean Code Analysis Report')]
+                                        [Content::create('php-clean-code: Report')]
                                     ),
                                     ...$divs,
                                 ]
@@ -234,7 +234,7 @@ class HtmlOutput implements Output
                 $this->getStateByRuleResult($ruleResult),
                 $ruleResult->getRule()->getName(),
                 $ruleResult->getMessage(),
-                $ruleResult->getCriticality() . ' %',
+                $ruleResult->getCriticality() === null ? '' : $ruleResult->getCriticality() . ' %',
             ]);
         }
 
@@ -284,18 +284,9 @@ class HtmlOutput implements Output
         return $this;
     }
 
-    public function initFilesProgressBar(int $countOfFiles): self
+    public function createProgressIterator(iterable $iterable): iterable
     {
-        $this->symfonyStyle->progressStart($countOfFiles);
-
-        return $this;
-    }
-
-    public function increaseFilesProgressBar(): self
-    {
-        $this->symfonyStyle->progressAdvance();
-
-        return $this;
+        return $this->symfonyStyle->createProgressBar()->iterate($iterable);
     }
 
     private function createTableHead(Table $table): Tag
