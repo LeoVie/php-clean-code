@@ -46,9 +46,6 @@ jobs:
       - name: "Unit Testing"
         run: |
           make unit
-      - name: "Functional Testing"
-        run: |
-          make functional
       - name: "Mutation Testing"
         run: |
           make infection
