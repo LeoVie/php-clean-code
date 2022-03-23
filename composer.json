@@ -1,4 +1,5 @@
 {
+    "name": "leovie/php-clean-code",
     "type": "project",
     "license": "BSD-3-Clause",
     "minimum-stability": "stable",
