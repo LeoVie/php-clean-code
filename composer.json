@@ -16,7 +16,7 @@
         "roave/security-advisories": "dev-latest",
         "symfony/console": "6.0.*",
         "symfony/dotenv": "6.0.*",
-        "symfony/finder": "5.4.*",
+        "symfony/finder": "6.0.*",
         "symfony/flex": "^2.1.6",
         "symfony/framework-bundle": "5.4.*",
         "symfony/runtime": "6.0.*",
