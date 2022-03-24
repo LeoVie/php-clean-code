@@ -20,7 +20,7 @@
         "symfony/flex": "^2.1.6",
         "symfony/framework-bundle": "5.4.*",
         "symfony/runtime": "5.4.*",
-        "symfony/stopwatch": "5.4.*",
+        "symfony/stopwatch": "6.0.*",
         "symfony/yaml": "5.4.*",
         "thecodingmachine/safe": "^1.3"
     },
